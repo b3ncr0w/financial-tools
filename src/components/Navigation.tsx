@@ -1,40 +1,41 @@
-import styled from "styled-components";
-import { NavigationLink } from "../cms/types";
-import { Link as RouterLink } from "react-router-dom";
+import { Link, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import { NavigationLink } from '../cms/types';
 
-export function Navigation({ data = [] }: { data?: NavigationLink[] }) {
-  if (!data) return null;
+interface NavigationProps {
+  data: NavigationLink[];
+}
+
+export function Navigation({ data }: NavigationProps) {
+  const { pathname } = useLocation();
 
   return (
     <Nav>
-      <List>
-        {data.map(({ text, url }, index) => (
-          <li key={index}>
-            <Link to={url}>{text}</Link>
-          </li>
-        ))}
-      </List>
+      {data.map((item) => (
+        <NavLink 
+          key={item.url} 
+          to={item.url}
+          $active={pathname === item.url}
+        >
+          {item.text}
+        </NavLink>
+      ))}
     </Nav>
   );
 }
 
 const Nav = styled.nav`
-  background: var(--color-surface);
-  padding: var(--spacing-md);
-`;
-
-const List = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
   gap: var(--spacing-md);
 `;
 
-const Link = styled(RouterLink)`
+const NavLink = styled(Link)<{ $active: boolean }>`
   color: var(--color-text);
   text-decoration: none;
+  font-weight: ${props => props.$active ? '600' : '400'};
+  opacity: ${props => props.$active ? '1' : '0.8'};
+  
   &:hover {
-    color: var(--color-primary);
+    opacity: 1;
   }
 `;

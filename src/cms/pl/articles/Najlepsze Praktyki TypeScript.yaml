@@ -1,9 +1,0 @@
-title: Najlepsze praktyki TypeScript
-description: Niezbędne wzorce i praktyki TypeScript dla lepszego kodu
-date: "2024-03-21"
-slug: najlepsze-praktyki-typescript
-content:
-  - type: heading
-    text: Dlaczego TypeScript?
-  - type: paragraph
-    text: TypeScript dodaje statyczne typowanie do JavaScript... 

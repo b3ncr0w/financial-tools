@@ -1,5 +1,9 @@
-title: Welcome to my website
+id: home
+title: Financial Tools
+menuTitle: Home
+order: 1
 description: This is the English version of the home page
+slug: /
 content:
   - type: heading
     text: Hello!

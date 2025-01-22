@@ -1,24 +1,22 @@
 import { Navigation } from './components/Navigation';
 import { LanguageSwitch } from './components/LanguageSwitch';
 import { ThemeSwitch } from './components/ThemeSwitch';
-import { Page } from './components/Page';
 import { useApp } from './context/AppContext'
 import { getData } from './cms/getData';
 import styled from 'styled-components';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import { NavigationLink, HomePage, Article } from './cms/types';
-import { config } from './cms/config';
+import { NavigationLink, Page as PageType, Article } from './cms/types';
 import { useEffect } from 'react';
 import { ArticlePage } from './components/ArticlePage';
+import { DynamicPage } from './components/DynamicPage';
 
 interface PageData {
   navigation: NavigationLink[];
-  home: HomePage;
-  about: HomePage;  // reusing HomePage type for about page
   meta: {
     title: string;
   };
   articles: Record<string, Article>;
+  pages: Record<string, PageType>;
 }
 
 function App() {
@@ -41,12 +39,8 @@ function App() {
         </Header>
         <Main>
           <Routes>
-            <Route 
-              path={config.pages.home.path} 
-              element={<Page {...data.home} />} 
-            />
-            <Route path={config.pages.about.path} element={<Page {...data.about} />} />
             <Route path="/articles/:slug" element={<ArticlePage />} />
+            <Route path="/*" element={<DynamicPage />} />
           </Routes>
         </Main>
       </Layout>

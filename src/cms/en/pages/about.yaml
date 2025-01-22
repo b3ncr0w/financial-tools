@@ -1,6 +1,14 @@
-title: About Me
-description: Learn more about who I am and what I do
+id: about
+title: About
+menuTitle: About
+order: 2
+description: About page
+slug: /about
 content:
+  - type: heading
+    text: About
+  - type: paragraph
+    text: This is the about page content.
   - type: heading
     text: My Story
   - type: markdown

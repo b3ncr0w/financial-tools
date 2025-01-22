@@ -1,13 +1,71 @@
 import { config } from "./config";
-import { CMS, Article } from "./types";
-
-type PageKeys = keyof typeof config.pages;
+import { CMS, Article, Page } from "./types";
 
 async function importFiles() {
   const data: Record<string, CMS> = {};
   const languages = Object.keys(config.languages);
   const slugMappings: Record<string, Record<string, string>> = {};
-  
+  const pageSlugMappings: Record<string, Record<string, string>> = {};
+
+  // Initialize data structure for all languages
+  for (const lang of languages as Array<keyof typeof config.languages>) {
+    data[lang] = {
+      navigation: [],
+      meta: { title: '' },
+      articles: {},
+      pages: {}
+    } as CMS;
+
+    // Load meta
+    try {
+      const meta = await import(/* @vite-ignore */ `./${lang}/meta.yaml`);
+      data[lang].meta = meta.default;
+    } catch (error) {
+      console.warn(`Meta file not found for language: ${lang}`);
+    }
+  }
+
+  // Load and process pages first
+  for (const lang of languages as Array<keyof typeof config.languages>) {
+    try {
+      const pageFiles = import.meta.glob<{ default: Page }>(
+        './*/pages/*.yaml',
+        { eager: true }
+      );
+      
+      for (const path in pageFiles) {
+        const langFromPath = path.split('/')[1];
+        if (langFromPath === lang) {
+          const page = pageFiles[path].default;
+          const pageId = page.id;
+          
+          if (!pageSlugMappings[pageId]) {
+            pageSlugMappings[pageId] = {};
+          }
+          
+          const pagePath = page.slug.startsWith('/') ? page.slug : `/${page.slug}`;
+          pageSlugMappings[pageId][lang] = pagePath;
+          
+          data[lang].pages[pagePath] = {
+            ...page,
+            slugs: pageSlugMappings[pageId]
+          };
+        }
+      }
+
+      // Generate navigation from available pages
+      data[lang].navigation = Object.values(data[lang].pages)
+        .sort((a, b) => (a.order || 999) - (b.order || 999))
+        .map(page => ({
+          text: page.menuTitle || page.title,
+          url: page.slug.startsWith('/') ? page.slug : `/${page.slug}`
+        }));
+
+    } catch (error) {
+      console.warn(`Pages not found for language: ${lang}`);
+    }
+  }
+
   // First pass: collect all articles and their translations
   for (const lang of languages as Array<keyof typeof config.languages>) {
     const articleFiles = import.meta.glob<{ default: Article }>(
@@ -34,32 +92,8 @@ async function importFiles() {
 
   // Second pass: load articles with mappings
   for (const lang of languages as Array<keyof typeof config.languages>) {
-    data[lang] = {
-      navigation: [],
-      meta: { title: '' } as CMS['meta'],
-      home: { title: '', description: '', content: [], articles: [] },
-      about: { title: '', description: '', content: [] },
-      articles: {}
-    };
-
     try {
-      // Import meta
-      const meta = await import(/* @vite-ignore */ `./${lang}/${config.meta}`);
-      data[lang].meta = meta.default;
-    } catch (error) {
-      console.warn(`Meta file not found for language: ${lang}`);
-    }
-
-    try {
-      // Import navigation
-      const navigation = await import(/* @vite-ignore */ `./${lang}/${config.navigation}`);
-      data[lang].navigation = navigation.default;
-    } catch (error) {
-      console.warn(`Navigation file not found for language: ${lang}`);
-    }
-
-    // Import articles
-    try {
+      // Import articles
       const articles: Record<string, Article> = {};
       const articleFiles = import.meta.glob<{ default: Article }>(
         './**/articles/*.yaml',
@@ -80,28 +114,26 @@ async function importFiles() {
       }
       
       data[lang].articles = articles;
-      data[lang].home.articles = Object.values(articles).sort((a, b) => 
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
     } catch (error) {
       console.warn(`Articles not found for language: ${lang}`);
     }
-
-    // Import pages
-    for (const [pageName, pageConfig] of Object.entries(config.pages)) {
-      try {
-        const page = await import(/* @vite-ignore */ `./${lang}/${pageConfig.file}`);
-        data[lang][pageName as PageKeys] = {
-          ...page.default,
-          articles: pageName === 'home' ? data[lang].home.articles : undefined
-        };
-      } catch (error) {
-        console.warn(`Page ${pageName} not found for language: ${lang}`);
-      }
-    }
   }
 
-  return { data, slugMappings };
+  // Update pages that should display articles
+  for (const lang of languages as Array<keyof typeof config.languages>) {
+    const sortedArticles = Object.values(data[lang].articles).sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
+    // Add articles to any page that needs them
+    Object.values(data[lang].pages).forEach(page => {
+      if (page.showArticles) {
+        page.articles = sortedArticles;
+      }
+    });
+  }
+
+  return { data, slugMappings, pageSlugMappings };
 }
 
-export const { data: getData, slugMappings: articleSlugs } = await importFiles();
+export const { data: getData, slugMappings: articleSlugs, pageSlugMappings } = await importFiles();

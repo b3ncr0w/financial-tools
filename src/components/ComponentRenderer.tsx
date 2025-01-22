@@ -8,7 +8,7 @@ interface ComponentRendererProps {
 export function ComponentRenderer({ component }: ComponentRendererProps) {
   switch (component.type) {
     case 'navigation':
-      return <Navigation {...component} />
+      return <Navigation data={component.data} />
     default:
       return null
   }

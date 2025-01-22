@@ -31,11 +31,17 @@ export interface Article {
   slugs?: Record<string, string>;
 }
 
-export interface HomePage {
-  title?: string;
+export interface Page {
+  id: string;
+  title: string;
+  menuTitle?: string;  // Optional title for navigation
+  order?: number;      // Optional order in navigation
   description?: string;
+  slug: string;
   content?: ContentBlock[];
+  slugs?: Record<string, string>;
   articles?: Article[];
+  showArticles?: boolean;
 }
 
 export interface Meta {
@@ -44,8 +50,12 @@ export interface Meta {
 
 export interface CMS {
   navigation: NavigationLink[];
-  home: HomePage;
-  about: HomePage;
   meta: Meta;
   articles: Record<string, Article>;
+  pages: Record<string, Page>;
+}
+
+export interface CMSComponent {
+  type: 'navigation';
+  data?: NavigationLink[];
 }

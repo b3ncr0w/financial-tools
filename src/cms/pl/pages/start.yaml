@@ -1,7 +1,5 @@
 id: home
 title: Narzędzia finansowe
-menuTitle: Strona główna
-order: 1
 description: To jest polska wersja strony głównej
 slug: /
 content:
