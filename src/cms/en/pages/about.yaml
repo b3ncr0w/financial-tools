@@ -1,0 +1,25 @@
+title: About Me
+description: Learn more about who I am and what I do
+content:
+  - type: heading
+    text: My Story
+  - type: markdown
+    text: |
+      I'm a passionate developer who loves creating user-friendly applications. 
+      I specialize in web development and enjoy working with modern technologies.
+
+      ### What I Do
+      - Frontend Development
+      - React Applications
+      - TypeScript Projects
+      - UI/UX Design
+
+      ### My Approach
+      I believe in:
+      1. Clean, maintainable code
+      2. User-centered design
+      3. Modern development practices
+  - type: heading
+    text: Skills
+  - type: paragraph
+    text: My expertise includes React, TypeScript, and modern web development practices. I'm always eager to learn new technologies and improve my skills. 

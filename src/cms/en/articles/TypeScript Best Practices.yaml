@@ -1,0 +1,9 @@
+title: TypeScript Best Practices
+description: Essential TypeScript patterns and practices for better code
+date: "2024-03-21"
+slug: typescript-best-practices
+content:
+  - type: heading
+    text: Why TypeScript?
+  - type: paragraph
+    text: TypeScript adds static typing to JavaScript... 

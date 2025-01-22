@@ -1,0 +1,11 @@
+title: O Mnie
+description: Dowiedz się więcej o tym kim jestem i czym się zajmuję
+content:
+  - type: heading
+    text: Moja Historia
+  - type: paragraph
+    text: Jestem pasjonatem programowania, który kocha tworzyć przyjazne dla użytkownika aplikacje. Specjalizuję się w tworzeniu stron internetowych i lubię pracować z nowoczesnymi technologiami.
+  - type: heading
+    text: Umiejętności
+  - type: paragraph
+    text: Moja specjalizacja obejmuje React, TypeScript i nowoczesne praktyki tworzenia stron internetowych. Zawsze chętnie uczę się nowych technologii i doskonalę swoje umiejętności. 
