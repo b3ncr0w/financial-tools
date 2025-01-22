@@ -50,6 +50,10 @@ export const lightTheme = {
     '--font-weight-h2': '600',
     '--font-size-body': '1rem',
     '--font-weight-body': '400',
+    '--color-surface-hover': '#F8FAFC',
+    '--color-success': '#22C55E',
+    '--color-error': '#EF4444',
+    '--color-text-secondary': 'rgba(0, 0, 0, 0.6)',
   }
 }
 
@@ -59,10 +63,14 @@ export const darkTheme = {
     ...lightTheme.cssVars,
     '--color-primary': '#0A84FF',
     '--color-secondary': '#5E5CE6',
-    '--color-background': '#000000',
+    '--color-background': '#101010',
     '--color-text': '#FFFFFF',
     '--color-surface': '#1C1C1E',
     '--color-border': '#38383A',
+    '--color-surface-hover': '#2D3748',
+    '--color-success': '#22C55E',
+    '--color-error': '#EF4444',
+    '--color-text-secondary': 'rgba(255, 255, 255, 0.6)',
   }
 }
 

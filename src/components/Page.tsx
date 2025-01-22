@@ -2,6 +2,7 @@ import { ContentBlock, Article } from "../cms/types";
 import styled from "styled-components";
 import { Markdown } from "./Markdown";
 import { ArticleGrid } from "./ArticleGrid";
+import { PortfolioModeling } from './PortfolioModeling';
 
 interface PageProps {
   title?: string;
@@ -10,20 +11,23 @@ interface PageProps {
   articles?: Article[];
 }
 
-export function Page({ title, description, content = [], articles }: PageProps) {
-  if (!title) return null;
-
+export function Page({ content = [], articles }: PageProps) {
   return (
     <Container>
       <Content>
-        <Title>{title}</Title>
-        {description && <Description>{description}</Description>}
         {content.map((block, index) => {
           switch (block.type) {
             case 'heading':
               return <Heading key={index}>{block.text}</Heading>;
             case 'markdown':
               return <Markdown key={index} content={block.text} />;
+            case 'component':
+              switch (block.name) {
+                case 'portfolio-modeling':
+                  return <PortfolioModeling key={index} {...block.props} />;
+                default:
+                  return null;
+              }
             default:
               return <Paragraph key={index}>{block.text}</Paragraph>;
           }
@@ -44,21 +48,8 @@ const Content = styled.article`
   width: 100%;
   max-width: 800px;
   padding: var(--spacing-lg);
-  background: var(--color-surface);
   border-radius: 8px;
   color: var(--color-text);
-`;
-
-const Title = styled.h1`
-  margin: 0 0 var(--spacing-md);
-  font-size: var(--font-size-h1);
-  color: var(--color-text);
-`;
-
-const Description = styled.p`
-  margin: 0 0 var(--spacing-lg);
-  color: var(--color-text);
-  opacity: 0.8;
 `;
 
 const Heading = styled.h2`

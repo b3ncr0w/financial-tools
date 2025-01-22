@@ -1,0 +1,34 @@
+id: portfolio-modeling
+menuTitle: Modelowanie portfela
+order: 1
+slug: /modelowanie-portfela
+content:
+  - type: heading
+    text: Modelowanie Portfela
+  - type: component
+    name: portfolio-modeling
+    props:
+      totalCapitalLabel: Całkowity kapitał
+      addWalletLabel: Dodaj portfel
+      nameLabel: Nazwa
+      percentageLabel: Procent
+      totalPercentageLabel: Suma procentów
+      walletNamePlaceholder: Wprowadź nazwę portfela
+      percentagePlaceholder: Wprowadź procent
+      totalCapitalPlaceholder: Wprowadź całkowity kapitał
+      currentValueLabel: Obecna wartość
+      targetValueLabel: Wartość docelowa
+      balanceLabel: Bilans
+      buyLabel: Do kupienia
+      sellLabel: Do sprzedania
+      errorMessages:
+        exceedsTotal: Suma przekracza 100% o {value}%. Użyj przycisków lub wpisz wartość, aby poprawić rozkład.
+        belowTotal: Brakuje {value}% do 100%. Użyj przycisków lub wpisz wartość, aby poprawić rozkład.
+      defaultCapital: 10000
+      defaultWallets:
+        - name: Trading
+          percentage: 10
+        - name: Bezpieczny
+          percentage: 60
+        - name: Ryzykowny
+          percentage: 30

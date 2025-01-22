@@ -2,10 +2,10 @@ import ReactMarkdown from 'react-markdown';
 import styled from 'styled-components';
 
 interface MarkdownProps {
-  content: string;
+  content?: string;
 }
 
-export function Markdown({ content }: MarkdownProps) {
+export function Markdown({ content = '' }: MarkdownProps) {
   return (
     <Container>
       <ReactMarkdown>{content}</ReactMarkdown>

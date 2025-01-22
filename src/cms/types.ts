@@ -16,9 +16,52 @@ export interface NavigationLink {
   url: string;
 }
 
+export interface ComponentProps {
+  portfolio_modeling: {
+    totalCapitalLabel?: string;
+    addWalletLabel?: string;
+    nameLabel?: string;
+    percentageLabel?: string;
+    totalPercentageLabel?: string;
+    walletNamePlaceholder?: string;
+    percentagePlaceholder?: string;
+    totalCapitalPlaceholder?: string;
+    defaultCapital?: number;
+    defaultWallets?: Array<{
+      name: string;
+      percentage: number;
+    }>;
+  }
+}
+
 export interface ContentBlock {
-  type: 'heading' | 'paragraph' | 'markdown';
-  text: string;
+  type: 'heading' | 'paragraph' | 'markdown' | 'component';
+  text?: string;
+  name?: string;
+  props?: {
+    totalCapitalLabel: string;
+    addWalletLabel: string;
+    nameLabel: string;
+    percentageLabel: string;
+    totalPercentageLabel: string;
+    walletNamePlaceholder: string;
+    percentagePlaceholder: string;
+    totalCapitalPlaceholder: string;
+    currentValueLabel: string;
+    targetValueLabel: string;
+    balanceLabel: string;
+    buyLabel: string;
+    sellLabel: string;
+    defaultCapital?: number;
+    defaultWallets?: Array<{
+      name: string;
+      percentage: number;
+    }>;
+    errorMessages: {
+      exceedsTotal: string;
+      belowTotal: string;
+    };
+  };
 }
 
 export interface Article {
