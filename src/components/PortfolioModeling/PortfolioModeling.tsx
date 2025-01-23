@@ -18,6 +18,14 @@ import { InfoTooltip } from "./InfoTooltip";
 import { prepareDataForExport } from "./utils";
 import { Toast } from '../Toast/Toast';
 
+const STORAGE_KEY = 'portfolio-modeling-state';
+
+interface StoredState {
+  tabs: Array<{ id: string; name: string }>;
+  tabsData: Record<string, TabData>;
+  activeTab: string;
+}
+
 export function PortfolioModeling(props: PortfolioModelingProps) {
   const {
     totalCapitalLabel = "Total Capital",
@@ -55,17 +63,49 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     importLabel = "Importuj",
   } = props;
 
-  const [tabs, setTabs] = useState<Array<{ id: string; name: string }>>(
-    defaultTabs.map((tab, index) => ({
+  const [tabs, setTabs] = useState<Array<{ id: string; name: string }>>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const { tabs } = JSON.parse(stored) as StoredState;
+        return tabs;
+      }
+    } catch (error) {
+      console.error('Error loading tabs from localStorage:', error);
+    }
+    
+    return defaultTabs.map((tab, index) => ({
       id: crypto.randomUUID(),
       name: tab.name || newPortfolioName.replace("{number}", String(index + 1)),
-    }))
-  );
+    }));
+  });
 
-  const [activeTab, setActiveTab] = useState<string>(tabs[0].id);
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const { activeTab } = JSON.parse(stored) as StoredState;
+        return activeTab;
+      }
+    } catch (error) {
+      console.error('Error loading activeTab from localStorage:', error);
+    }
+    
+    return tabs[0].id;
+  });
+
   const [tabsData, setTabsData] = useState<Record<string, TabData>>(() => {
-    const initialData: Record<string, TabData> = {};
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const { tabsData } = JSON.parse(stored) as StoredState;
+        return tabsData;
+      }
+    } catch (error) {
+      console.error('Error loading tabsData from localStorage:', error);
+    }
 
+    const initialData: Record<string, TabData> = {};
     defaultTabs.forEach((tab, index) => {
       const tabId = tabs[index].id;
       initialData[tabId] = {
@@ -86,7 +126,6 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         autoWallet: defaultAutoWallet,
       };
     });
-
     return initialData;
   });
 
@@ -466,6 +505,20 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   const dismissToast = useCallback((index: number) => {
     setToastMessages(messages => messages.filter((_, i) => i !== index));
   }, []);
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      const state: StoredState = {
+        tabs,
+        tabsData,
+        activeTab,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {
+      console.error('Error saving state to localStorage:', error);
+    }
+  }, [tabs, tabsData, activeTab]);
 
   return (
     <Container>
