@@ -19,6 +19,10 @@ content:
       resetLabel: Resetuj
       autoCapitalLabel: Automatyczny kapitał
       autoWalletLabel: Automatyczny portfel
+      defaultAssetName: "Walor {number}"
+      defaultWalletName: "Portfel {number}"
+      newPortfolioName: "Portfolio {number}"
+      autoFillButtonTitle: "Ustaw na {value}%"
 
       # Komunikaty błędów
       walletErrorMessages:

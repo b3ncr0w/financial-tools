@@ -23,6 +23,10 @@ export interface PortfolioModelingProps {
   resetLabel?: string;
   autoCapitalLabel?: string;
   autoWalletLabel?: string;
+  defaultAssetName?: string;
+  defaultWalletName?: string;
+  newPortfolioName?: string;
+  autoFillButtonTitle?: string;
 
   // Komunikaty błędów
   walletErrorMessages?: {
@@ -47,6 +51,4 @@ export interface PortfolioModelingProps {
   }>;
   defaultAutoCapital?: boolean;
   defaultAutoWallet?: boolean;
-  defaultWalletName?: string;
-  defaultAssetName?: string;
 } 

@@ -51,11 +51,12 @@ interface WalletItemProps {
   onRemoveAsset: (walletId: string, assetId: string) => void;
   onDistributeAsset: (walletId: string, assetId: string) => void;
   autoWallet: boolean;
+  autoFillButtonTitle: string;
 }
 
 const formatNumber = (value: number) => {
   if (!value && value !== 0) return '\u00A0-\u00A0';
-  return value.toFixed(2);
+  return value === 0 ? '' : value.toFixed(2);
 };
 
 export function WalletItem({
@@ -72,7 +73,8 @@ export function WalletItem({
   onUpdateAsset,
   onRemoveAsset,
   onDistributeAsset,
-  autoWallet
+  autoWallet,
+  autoFillButtonTitle
 }: WalletItemProps) {
   const balance = targetValue - wallet.currentValue;
   const walletTargetValue = targetValue;
@@ -102,7 +104,7 @@ export function WalletItem({
         {!isValid && (
           <AutoFillButton 
             onClick={() => onDistribute(wallet.id)}
-            title={`Ustaw na ${(100 - (totalPercentage - wallet.percentage)).toFixed(1)}%`}
+            title={autoFillButtonTitle.replace('{value}', (100 - (totalPercentage - wallet.percentage)).toFixed(1))}
           >
             {totalPercentage > 100 
               ? `-${(totalPercentage - 100)}` 
@@ -157,7 +159,7 @@ export function WalletItem({
       <AddAssetButton 
         onClick={() => onAddAsset(wallet.id)}
       >
-        + Dodaj asset
+        {labels.addAsset}
       </AddAssetButton>
     </WalletPanel>
   );

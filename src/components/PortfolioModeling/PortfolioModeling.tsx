@@ -46,7 +46,9 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     defaultAutoWallet = false,
     resetLabel = "Resetuj",
     defaultWalletName = "Wallet {number}",
-    defaultAssetName = "Asset {number}",
+    defaultAssetName = "Walor {number}",
+    newPortfolioName = "Portfolio {number}",
+    autoFillButtonTitle = "Set to {value}%",
   } = props;
 
   const [tabs, setTabs] = useState<Array<{ id: string; name: string }>>([
@@ -91,11 +93,40 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   };
 
   const setTotalCapital = (value: number) => {
-    updateTabData({ totalCapital: value });
+    if (!autoCapital) {
+      updateTabData({ totalCapital: value });
+    }
   };
 
+  useEffect(() => {
+    if (autoCapital) {
+      const sum = wallets.reduce((sum, wallet) => sum + wallet.currentValue, 0);
+      if (sum !== totalCapital) {
+        updateTabData({ totalCapital: sum });
+      }
+    }
+  }, [autoCapital, wallets.map(w => w.currentValue).join()]);
+
   const setAutoCapital = (value: boolean) => {
-    updateTabData({ autoCapital: value });
+    if (value) {
+      const sum = wallets.reduce((sum, wallet) => sum + wallet.currentValue, 0);
+      setTabsData({
+        ...tabsData,
+        [activeTab]: {
+          ...tabsData[activeTab],
+          autoCapital: value,
+          totalCapital: sum > 0 ? sum : totalCapital
+        }
+      });
+    } else {
+      setTabsData({
+        ...tabsData,
+        [activeTab]: {
+          ...tabsData[activeTab],
+          autoCapital: value
+        }
+      });
+    }
   };
 
   const setAutoWallet = (value: boolean) => {
@@ -103,41 +134,21 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   };
 
   useEffect(() => {
-    if (autoCapital) {
-      const sum = wallets.reduce((sum, wallet) => sum + wallet.currentValue, 0);
-      if (sum > 0) {
-        setTotalCapital(sum);
-      }
-    }
-  }, [autoCapital, wallets]);
-
-  useEffect(() => {
     if (autoWallet) {
       const updatedWallets = wallets.map(wallet => {
-        // Jeśli nie ma assetów, użyj wartości docelowej
-        if (wallet.assets.length === 0) {
-          const targetValue = (totalCapital * wallet.percentage) / 100;
-          if (wallet.currentValue !== targetValue) {
+        // Aktualizuj tylko portfele z assetami
+        if (wallet.assets.length > 0) {
+          const assetsSum = wallet.assets.reduce((sum, asset) => sum + asset.currentValue, 0);
+          if (wallet.currentValue !== assetsSum) {
             return {
               ...wallet,
-              currentValue: targetValue
+              currentValue: assetsSum
             };
           }
-          return wallet;
-        }
-
-        // Jeśli są assety, użyj ich sumy
-        const assetsSum = wallet.assets.reduce((sum, asset) => sum + asset.currentValue, 0);
-        if (wallet.currentValue !== assetsSum) {
-          return {
-            ...wallet,
-            currentValue: assetsSum
-          };
         }
         return wallet;
       });
 
-      // Aktualizuj tylko jeśli są zmiany
       const hasChanges = updatedWallets.some(
         (wallet, i) => wallet.currentValue !== wallets[i].currentValue
       );
@@ -161,7 +172,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     ]);
   };
 
-  const addAsset = (walletId: string) => {
+  const addWalor = (walletId: string) => {
     setWallets(
       wallets.map((wallet) =>
         wallet.id === walletId
@@ -279,16 +290,20 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   };
 
   const getAssetsError = () => {
+    const errors: string[] = [];
+    
     for (const wallet of wallets) {
       const assetsTotal = wallet.assets.reduce((sum, a) => sum + a.percentage, 0);
       if (assetsTotal !== 100 && wallet.assets.length > 0) {
         const diff = Math.abs(assetsTotal - 100).toFixed(1);
-        return assetsTotal > 100
-          ? `Suma procentów assetów w portfelu "${wallet.name}" przekracza 100% o ${diff}%`
-          : `Do 100% sumy assetów w portfelu "${wallet.name}" brakuje ${diff}%`;
+        const error = assetsTotal > 100
+          ? assetErrorMessages.exceedsTotal.replace('{wallet}', wallet.name).replace('{value}', diff)
+          : assetErrorMessages.belowTotal.replace('{wallet}', wallet.name).replace('{value}', diff);
+        errors.push(error);
       }
     }
-    return '';
+    
+    return errors;
   };
 
   const totalPercentage = wallets.reduce(
@@ -323,7 +338,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   const addTab = () => {
     const newTab = {
       id: crypto.randomUUID(),
-      name: `Portfolio ${tabs.length + 1}`
+      name: newPortfolioName.replace('{number}', String(tabs.length + 1))
     };
     setTabs([...tabs, newTab]);
     setTabsData({
@@ -407,7 +422,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         </TotalCapitalSection>
 
         <PortfolioSummary
-          errorMessage={[getPortfolioError(), getAssetsError()].filter(Boolean)}
+          errorMessage={[getPortfolioError(), ...getAssetsError()].filter(Boolean)}
         />
       </LeftPanel>
 
@@ -435,11 +450,12 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
               onUpdate={updateWallet}
               onRemove={removeWallet}
               onDistribute={distributeRemaining}
-              onAddAsset={addAsset}
+              onAddAsset={addWalor}
               onUpdateAsset={updateAsset}
               onRemoveAsset={removeAsset}
               onDistributeAsset={distributeAsset}
               autoWallet={autoWallet}
+              autoFillButtonTitle={autoFillButtonTitle}
             />
           ))}
       </RightPanel>
