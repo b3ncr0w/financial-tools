@@ -72,6 +72,8 @@ export interface PortfolioModelingProps {
   // Labels
   exportLabel?: string;
   importLabel?: string;
+
+  toastDuration?: number;  // Optional duration in milliseconds
 }
 
 export interface TabData {

@@ -158,22 +158,37 @@ export const Container = styled.div`
   z-index: ${Z_INDEX.base};
 `;
 
-export const LeftPanel = styled.div`
-  display: flex;
-  flex-direction: column;
+export const TopPanel = styled.div`
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: ${SPACING.gap};
-  position: sticky;
-  align-self: flex-start;
-  align-items: center;
-  justify-content: center;
-  width: 350px;
-  flex-shrink: 0;
-  padding: 16px;
+  width: 100%;
+  max-width: 1000px;
+  padding: ${SPACING.padding};
+  align-items: start;
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
-    align-items: center;
-    position: static;
-    flex-shrink: 0;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+`;
+
+export const ActionsPanel = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+  max-width: 480px;
+  justify-self: start;
+
+  > button:nth-child(3) {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    justify-self: center;
   }
 `;
 
@@ -187,6 +202,11 @@ export const BaseButton = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   
   &:hover {
     border-color: var(--color-primary);
@@ -194,21 +214,22 @@ export const BaseButton = styled.button`
   }
 `;
 
-export const RightPanel = styled.div`
+export const BottomPanel = styled.div`
   width: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: ${SPACING.gap};
-  flex: 1;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 480px);
   justify-content: center;
+  justify-items: start;
+  gap: ${SPACING.gap};
+  padding: ${SPACING.padding};
   position: relative;
   z-index: ${Z_INDEX.base};
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
-    min-width: 0;
-    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: ${SPACING.gap};
   }
 `;
 
@@ -219,16 +240,16 @@ export const WalletPanel = styled.div`
   border-radius: 12px;
   border: 1px solid var(--color-border);
   padding: 0;
-  width: fit-content;
-  min-width: 0;
+  width: 480px;
+  min-width: 480px;
   height: fit-content;
-  flex-grow: 0;
-  flex-shrink: 0;
   position: relative;
   z-index: ${Z_INDEX.base};
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
-    flex-shrink: 0;
+    width: 100%;
+    min-width: 0;
+    max-width: 480px;
   }
 `;
 
@@ -291,6 +312,7 @@ export const WalletAssets = styled.div`
 `;
 
 export const AutoFillButton = styled(BaseButton)`
+  width: fit-content;
   position: absolute;
   right: 80px;
   top: 12px;
@@ -318,7 +340,13 @@ export const TotalCapitalSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: fit-content;
+  width: 100%;
+  max-width: 480px;
+  justify-self: end;
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    justify-self: center;
+  }
 `;
 
 export const TotalCapitalRow = styled.div`
@@ -342,47 +370,6 @@ export const Label = styled.label`
   margin-left: 8px;
 `;
 
-export const Summary = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-surface);
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
-`;
-
-export const SummaryItem = styled.div`
-  font-size: 0.95em;
-  font-weight: 500;
-  text-align: center;
-  
-  .valid {
-    color: var(--color-success);
-    font-weight: 600;
-  }
-  
-  .invalid {
-    color: var(--color-error);
-    font-weight: 600;
-  }
-`;
-
-export const ErrorMessage = styled.div`
-  color: var(--color-error);
-  font-size: 0.9em;
-  text-align: center;
-`;
-
-export const ActionsPanel = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 12px;
-  width: fit-content;
-  flex-wrap: wrap;
-`;
-
 export const Toggle = styled.label`
   display: flex;
   align-items: center;
@@ -401,7 +388,8 @@ export const Toggle = styled.label`
 
   input {
     appearance: none;
-    width: 50px;
+    width: 40px;
+    min-width: 40px;
     height: 25px;
     background: var(--color-border);
     border-radius: 15px;

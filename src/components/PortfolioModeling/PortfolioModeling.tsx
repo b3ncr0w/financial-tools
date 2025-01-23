@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   BaseButton,
@@ -7,16 +7,16 @@ import {
   Label,
   ActionsPanel,
   Toggle,
-  LeftPanel,
-  RightPanel,
+  TopPanel,
+  BottomPanel,
 } from "./styled";
 import { TotalCapital } from "./TotalCapital";
 import { WalletItem } from "./WalletItem";
-import { PortfolioSummary } from "./Summary";
 import { Wallet, PortfolioModelingProps, TabData } from "./types";
 import { Tabs } from "./Tabs";
 import { InfoTooltip } from "./InfoTooltip";
 import { prepareDataForExport } from "./utils";
+import { Toast } from '../Toast/Toast';
 
 export function PortfolioModeling(props: PortfolioModelingProps) {
   const {
@@ -92,6 +92,8 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
 
   const activeData = tabsData[activeTab];
   const { wallets, totalCapital, autoCapital, autoWallet } = activeData;
+
+  const [toastMessages, setToastMessages] = useState<string[]>([]);
 
   const updateTabData = (data: Partial<TabData>) => {
     setTabsData({
@@ -414,7 +416,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         const data = JSON.parse(e.target.result as string);
         const newTab = {
           id: crypto.randomUUID(),
-          name: file.name.replace(".json", ""),
+          name: file.name.replace('.json', '')
         };
 
         setTabs([...tabs, newTab]);
@@ -436,17 +438,34 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
             totalCapital: data.totalCapital || null,
             autoCapital: data.autoCapital || false,
             autoWallet: data.autoWallet || false,
-          },
+          }
         });
         setActiveTab(newTab.id);
       } catch (error) {
-        console.error("Error importing file:", error);
-        // You might want to show an error message to the user here
+        setToastMessages(messages => [...messages, 'Błąd podczas importowania pliku']);
       }
     };
     reader.readAsText(file);
-    event.target.value = ""; // Reset input
+    event.target.value = '';
   };
+
+  useEffect(() => {
+    const portfolioError = getPortfolioError();
+    const assetsErrors = getAssetsError();
+    
+    const errors = [portfolioError, ...assetsErrors].filter(Boolean);
+    
+    // Only update if errors have changed
+    setToastMessages(prevMessages => {
+      const newMessages = errors.filter(error => !prevMessages.includes(error));
+      const existingMessages = prevMessages.filter(msg => errors.includes(msg));
+      return [...existingMessages, ...newMessages];
+    });
+  }, [wallets, totalCapital]);
+
+  const dismissToast = useCallback((index: number) => {
+    setToastMessages(messages => messages.filter((_, i) => i !== index));
+  }, []);
 
   return (
     <Container>
@@ -458,15 +477,12 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         onRemoveTab={removeTab}
         onRenameTab={renameTab}
       />
-      <LeftPanel>
+      <TopPanel>
         <ActionsPanel>
-          <BaseButton style={{ width: "100%" }} onClick={addWallet}>
-            {addWalletLabel}
-          </BaseButton>
           <BaseButton onClick={handleExport}>
             {exportLabel}
           </BaseButton>
-          <BaseButton>
+          <BaseButton as="label">
             {importLabel}
             <input
               type="file"
@@ -474,6 +490,9 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
               onChange={handleImport}
               style={{ display: "none" }}
             />
+          </BaseButton>
+          <BaseButton onClick={addWallet}>
+            {addWalletLabel}
           </BaseButton>
         </ActionsPanel>
 
@@ -490,6 +509,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
                 position: "relative",
                 display: "flex",
                 alignItems: "center",
+                gap: "16px"
               }}
             >
               <Toggle>
@@ -512,15 +532,9 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
             </div>
           </TotalCapitalRow>
         </TotalCapitalSection>
+      </TopPanel>
 
-        <PortfolioSummary
-          errorMessage={[getPortfolioError(), ...getAssetsError()].filter(
-            Boolean
-          )}
-        />
-      </LeftPanel>
-
-      <RightPanel>
+      <BottomPanel>
         {wallets.map((wallet) => (
           <WalletItem
             key={wallet.id}
@@ -558,7 +572,8 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
             autoFillButtonTitle={autoFillButtonTitle}
           />
         ))}
-      </RightPanel>
+      </BottomPanel>
+      <Toast messages={toastMessages} onDismiss={dismissToast} />
     </Container>
   );
 }
