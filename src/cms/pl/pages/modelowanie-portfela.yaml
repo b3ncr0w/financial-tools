@@ -15,10 +15,10 @@ content:
       buyLabel: Kup
       sellLabel: Sprzedaj
       addAssetLabel: + Dodaj walor
-      exportLabel: Eksportuj
-      importLabel: Importuj
-      autoCapitalLabel: Automatyczny kapitał
-      autoWalletLabel: Automatyczny portfel
+      exportLabel: Eksport
+      importLabel: Import
+      autoCapitalLabel: Auto-Kapitał
+      autoWalletLabel: Auto-Portfel
       defaultAssetName: "Walor {number}"
       defaultWalletName: "Portfel {number}"
       newPortfolioName: "Portfolio {number}"
