@@ -51,4 +51,7 @@ export interface PortfolioModelingProps {
   }>;
   defaultAutoCapital?: boolean;
   defaultAutoWallet?: boolean;
+
+  // Tooltips
+  autoTooltip?: string;
 } 

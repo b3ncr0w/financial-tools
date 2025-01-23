@@ -13,7 +13,7 @@ content:
       # Główne etykiety
       totalCapitalLabel: Kapitał całkowity
       addWalletLabel: + Dodaj portfel
-      buyLabel: Dokup
+      buyLabel: Kup
       sellLabel: Sprzedaj
       addAssetLabel: + Dodaj walor
       resetLabel: Resetuj
@@ -63,3 +63,26 @@ content:
               percentage: 10
         - name: Trading
           percentage: 10
+          assets:
+            - name: USDT
+              percentage: 100
+
+      # Tooltips
+      autoTooltip: |
+        ### Tryby automatyczne
+
+        ## Automatyczny kapitał
+        - Sumuje wartości wszystkich portfeli jako kapitał całkowity
+        - Aktualizuje się automatycznie przy zmianie wartości portfeli
+
+        ### Nie nadaje się do rebalansowania portfela!
+        **Używaj, gdy nie znasz całkowitej wartości portfolio, a jedynie portfeli.**
+        **Po obliczeniu kapitału całkowitego, wyłącz tryb automatyczny.**
+        
+        ## Automatyczny portfel
+        - Sumuje wartości walorów w portfelu jako wartość portfela
+        - Aktualizuje się automatycznie przy zmianie wartości walorów
+
+        **Używaj, gdy nie znasz całkowitej wartości portfela, a jedynie walorów.**
+
+        

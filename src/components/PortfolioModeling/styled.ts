@@ -21,6 +21,14 @@ const BREAKPOINTS = {
   mobile: '900px',
 } as const;
 
+export const Z_INDEX = {
+  base: 1,
+  autoFill: 10,
+  tooltip: 10000,
+  overlay: 9999,
+  tooltipContainer: 9998
+} as const;
+
 export const CompactInput = styled.input`
   height: 42px;
   padding: 0 8px;
@@ -53,7 +61,6 @@ export const CompactInput = styled.input`
   }
 
   &:disabled {
-    background: var(--color-background);
     border-style: dashed;
     color: var(--color-primary);
     
@@ -147,6 +154,8 @@ export const Container = styled.div`
   margin: 0 auto;
   flex-wrap: wrap;
   justify-content: center;
+  position: relative;
+  z-index: ${Z_INDEX.base};
 `;
 
 export const LeftPanel = styled.div`
@@ -194,6 +203,8 @@ export const RightPanel = styled.div`
   flex: 1;
   align-items: flex-start;
   justify-content: center;
+  position: relative;
+  z-index: ${Z_INDEX.base};
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
     min-width: 0;
@@ -213,6 +224,8 @@ export const WalletPanel = styled.div`
   height: fit-content;
   flex-grow: 0;
   flex-shrink: 0;
+  position: relative;
+  z-index: ${Z_INDEX.base};
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
     flex-shrink: 0;
@@ -282,7 +295,7 @@ export const AutoFillButton = styled(BaseButton)`
   right: 80px;
   top: 12px;
   background: var(--color-primary);
-  z-index: 1;
+  z-index: ${Z_INDEX.autoFill};
   border: none;
 
   &:hover {
@@ -379,6 +392,7 @@ export const Toggle = styled.label`
   color: var(--color-text-secondary);
   opacity: 0.9;
   transition: opacity 0.2s;
+  position: relative;
 
   &:hover {
     opacity: 1;
@@ -386,10 +400,10 @@ export const Toggle = styled.label`
 
   input {
     appearance: none;
-    width: 40px;
-    height: 20px;
+    width: 50px;
+    height: 25px;
     background: var(--color-border);
-    border-radius: 10px;
+    border-radius: 15px;
     position: relative;
     cursor: pointer;
     transition: all 0.2s;
@@ -401,17 +415,17 @@ export const Toggle = styled.label`
     &::before {
       content: '';
       position: absolute;
-      width: 16px;
-      height: 16px;
+      width: 21px;
+      height: 21px;
       border-radius: 50%;
       background: white;
       top: 2px;
       left: 2px;
-      transition: all 0.2s;
+      transition: transform 0.2s;
     }
 
     &:checked::before {
-      left: 22px;
+      transform: translateX(14px);
     }
   }
 
@@ -419,4 +433,9 @@ export const Toggle = styled.label`
     font-style: italic;
     color: var(--color-primary);
   }
+`;
+
+export const ToggleLabelWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;

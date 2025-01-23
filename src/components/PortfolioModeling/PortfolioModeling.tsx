@@ -8,13 +8,14 @@ import {
   ActionsPanel,
   Toggle,
   LeftPanel,
-  RightPanel
+  RightPanel,
 } from "./styled";
 import { TotalCapital } from "./TotalCapital";
 import { WalletItem } from "./WalletItem";
 import { PortfolioSummary } from "./Summary";
 import { Wallet, PortfolioModelingProps } from "./types";
 import { Tabs } from "./Tabs";
+import { InfoTooltip } from './InfoTooltip';
 
 interface TabData {
   wallets: Wallet[];
@@ -42,6 +43,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     defaultWallets = [],
     autoCapitalLabel = "Auto Capital",
     autoWalletLabel = "Auto Wallet",
+    autoTooltip = "### Tryby automatyczne\n\n**Automatyczny kapitał**\n- Sumuje wartości wszystkich portfeli jako kapitał całkowity\n- Aktualizuje się automatycznie przy zmianie wartości portfeli\n\n**Automatyczny portfel**\n- Sumuje wartości walorów w portfelu jako wartość portfela\n- Aktualizuje się automatycznie przy zmianie wartości walorów",
     defaultAutoCapital = false,
     defaultAutoWallet = false,
     resetLabel = "Resetuj",
@@ -402,22 +404,25 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
               onChange={setTotalCapital}
               disabled={autoCapital}
             />
-            <Toggle>
-              <input
-                type="checkbox"
-                checked={autoCapital}
-                onChange={(e) => setAutoCapital(e.target.checked)}
-              />
-              <span>{autoCapitalLabel}</span>
-            </Toggle>
-            <Toggle>
-              <input
-                type="checkbox"
-                checked={autoWallet}
-                onChange={(e) => setAutoWallet(e.target.checked)}
-              />
-              <span>{autoWalletLabel}</span>
-            </Toggle>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <Toggle>
+                <input
+                  type="checkbox"
+                  checked={autoCapital}
+                  onChange={(e) => setAutoCapital(e.target.checked)}
+                />
+                <span>{autoCapitalLabel}</span>
+              </Toggle>
+              <Toggle>
+                <input
+                  type="checkbox"
+                  checked={autoWallet}
+                  onChange={(e) => setAutoWallet(e.target.checked)}
+                />
+                <span>{autoWalletLabel}</span>
+              </Toggle>
+              <InfoTooltip text={autoTooltip} />
+            </div>
           </TotalCapitalRow>
         </TotalCapitalSection>
 
