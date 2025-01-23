@@ -1,9 +1,6 @@
 import { Summary, SummaryItem } from './styled';
 
 interface SummaryProps {
-  totalPercentage: number;
-  isValid: boolean;
-  label: string;
   errorMessage: string[];
 }
 

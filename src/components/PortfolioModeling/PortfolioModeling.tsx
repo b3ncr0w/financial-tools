@@ -21,7 +21,6 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     addWalletLabel = "Add Wallet",
     nameLabel = "Name",
     percentageLabel = "Percentage",
-    totalPercentageLabel = "Total Percentage",
     walletNamePlaceholder = "Enter wallet name",
     percentagePlaceholder = "Enter percentage",
     currentValueLabel = "Current Value",
@@ -327,9 +326,6 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         </TotalCapitalSection>
 
         <PortfolioSummary
-          totalPercentage={totalPercentage}
-          isValid={isValid}
-          label={totalPercentageLabel}
           errorMessage={[getPortfolioError(), getAssetsError()].filter(Boolean)}
         />
       </LeftPanel>
