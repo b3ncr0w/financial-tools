@@ -6,7 +6,7 @@ export type InputChangeEvent = ChangeEvent<HTMLInputElement>;
 const SPACING = {
   gap: '24px',
   padding: '16px',
-  itemPadding: '8px 16px',
+  itemPadding: '8px',
 } as const;
 
 const COLUMN_WIDTHS = {
@@ -15,6 +15,10 @@ const COLUMN_WIDTHS = {
   value: '90px',
   target: '150px',
   action: '30px'
+} as const;
+
+const BREAKPOINTS = {
+  mobile: '900px',
 } as const;
 
 export const CompactInput = styled.input`
@@ -136,37 +140,82 @@ export const ActionColumn = styled(Column)`
 `;
 
 export const Container = styled.div`
-  width: fit-content;
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  max-width: 100vw;
   margin: 0 auto;
-  padding: ${SPACING.padding};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: ${SPACING.gap};
+  flex-wrap: wrap;
+  justify-content: center;
 `;
 
-export const ItemContainer = styled.div`
-  display: flex;
-  padding: ${SPACING.itemPadding};
-  align-items: center;
-  height: 48px;
-  position: relative;
-`;
-
-export const WalletList = styled.div`
+export const LeftPanel = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${SPACING.gap};
+  position: sticky;
+  top: 24px;
+  align-self: flex-start;
+  justify-content: center;
+  width: 350px;
+  flex-shrink: 0;
+  padding: 0 16px;
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    position: static;
+    flex-shrink: 0;
+  }
+`;
+
+export const BaseButton = styled.button`
+  padding: 12px;
+  border: 1px dashed var(--color-border);
+  border-radius: 22px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  
+  &:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+`;
+
+export const RightPanel = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: ${SPACING.gap};
+  flex: 1;
+  align-items: flex-start;
+  justify-content: center;
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    min-width: 0;
+    flex: none;
+  }
 `;
 
 export const WalletPanel = styled.div`
-  width: fit-content;
   display: flex;
   flex-direction: column;
   background: var(--color-surface);
   border-radius: 12px;
   border: 1px solid var(--color-border);
   padding: 0;
+  width: fit-content;
+  min-width: 0;
+  height: fit-content;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    flex-shrink: 0;
+  }
 `;
 
 export const Value = styled.div`
@@ -205,21 +254,12 @@ export const ActionButton = styled.button`
   }
 `;
 
-export const BaseButton = styled.button`
-  padding: 12px;
-  border: 1px dashed var(--color-border);
-  border-radius: 22px;
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  font-size: 0.9em;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-  
-  &:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-  }
+export const ItemContainer = styled.div`
+  display: flex;
+  padding: ${SPACING.itemPadding};
+  align-items: center;
+  height: 48px;
+  position: relative;
 `;
 
 export const WalletAssets = styled.div`
@@ -273,11 +313,12 @@ export const TotalCapitalSection = styled.div`
 `;
 
 export const TotalCapitalRow = styled.div`
-  width: 300px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
   align-items: center;
+
 
   input {
     box-sizing: border-box;
@@ -329,6 +370,7 @@ export const ActionsPanel = styled.div`
   gap: 8px;
   border-radius: 12px;
   width: fit-content;
+  flex-wrap: wrap;
 `;
 
 export const Toggle = styled.label`

@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import {
   Container,
-  WalletList,
   BaseButton,
   TotalCapitalSection,
   TotalCapitalRow,
   Label,
   ActionsPanel,
-  Toggle
+  Toggle,
+  LeftPanel,
+  RightPanel
 } from "./styled";
 import { TotalCapital } from "./TotalCapital";
 import { WalletItem } from "./WalletItem";
@@ -48,6 +49,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     autoWalletLabel = "Auto Wallet",
     defaultAutoCapital = false,
     defaultAutoWallet = false,
+    resetLabel = "Resetuj",
   } = props;
 
   const [totalCapital, setTotalCapital] = useState<number>(defaultCapital);
@@ -75,16 +77,31 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         setTotalCapital(sum);
       }
     }
-  }, [autoCapital]);
+  }, [autoCapital, wallets]);
 
   useEffect(() => {
     if (autoWallet) {
-      setWallets(wallets.map(wallet => ({
-        ...wallet,
-        currentValue: wallet.assets.reduce((sum, asset) => sum + asset.currentValue, 0)
-      })));
+      const updatedWallets = wallets.map(wallet => {
+        const currentSum = wallet.assets.reduce((sum, asset) => sum + asset.currentValue, 0);
+        if (wallet.currentValue !== currentSum) {
+          return {
+            ...wallet,
+            currentValue: currentSum
+          };
+        }
+        return wallet;
+      });
+
+      // Aktualizuj tylko jeśli są zmiany
+      const hasChanges = updatedWallets.some(
+        (wallet, i) => wallet.currentValue !== wallets[i].currentValue
+      );
+      
+      if (hasChanges) {
+        setWallets(updatedWallets);
+      }
     }
-  }, [autoWallet, wallets]);
+  }, [autoWallet, wallets.map(w => w.assets.map(a => a.currentValue).join()).join()]);
 
   const addWallet = () => {
     setWallets([
@@ -244,90 +261,93 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
 
   return (
     <Container>
-      <ActionsPanel>
-        <BaseButton onClick={resetToDefault}>
-          Resetuj
-        </BaseButton>
-      </ActionsPanel>
+      <LeftPanel>
+        <ActionsPanel>
+          <BaseButton onClick={resetToDefault}>
+            {resetLabel}
+          </BaseButton>
+          <BaseButton onClick={addWallet}>
+            {addWalletLabel}
+          </BaseButton>
+        </ActionsPanel>
 
-      <TotalCapitalSection>
-        <Label>{totalCapitalLabel}</Label>
-        <TotalCapitalRow>
-          <TotalCapital
-            value={totalCapital}
-            onChange={setTotalCapital}
-            disabled={autoCapital}
-          />
-          <Toggle>
-            <input
-              type="checkbox"
-              checked={autoCapital}
-              onChange={(e) => setAutoCapital(e.target.checked)}
+        <TotalCapitalSection>
+          <Label>{totalCapitalLabel}</Label>
+          <TotalCapitalRow>
+            <TotalCapital
+              value={totalCapital}
+              onChange={setTotalCapital}
+              disabled={autoCapital}
             />
-            <span>{autoCapitalLabel}</span>
-          </Toggle>
-          <Toggle>
-            <input
-              type="checkbox"
-              checked={autoWallet}
-              onChange={(e) => setAutoWallet(e.target.checked)}
+            <Toggle>
+              <input
+                type="checkbox"
+                checked={autoCapital}
+                onChange={(e) => setAutoCapital(e.target.checked)}
+              />
+              <span>{autoCapitalLabel}</span>
+            </Toggle>
+            <Toggle>
+              <input
+                type="checkbox"
+                checked={autoWallet}
+                onChange={(e) => setAutoWallet(e.target.checked)}
+              />
+              <span>{autoWalletLabel}</span>
+            </Toggle>
+          </TotalCapitalRow>
+        </TotalCapitalSection>
+
+        <PortfolioSummary
+          totalPercentage={totalPercentage}
+          isValid={isValid}
+          label={totalPercentageLabel}
+          errorMessage={getErrorMessage()}
+        />
+      </LeftPanel>
+
+      <RightPanel>
+          {wallets.map((wallet) => (
+            <WalletItem
+              key={wallet.id}
+              wallet={wallet}
+              isValid={isValid}
+              totalPercentage={totalPercentage}
+              targetValue={(totalCapital * wallet.percentage) / 100}
+              labels={{
+                name: nameLabel,
+                percentage: percentageLabel,
+                current: currentValueLabel,
+                target: targetValueLabel,
+                balance: balanceLabel,
+                buy: buyLabel,
+                sell: sellLabel,
+                addAsset: addAssetLabel,
+                addAssetTooltip,
+                removeWalletTooltip,
+                removeAssetTooltip,
+                autoFillWalletTooltip,
+                autoFillAssetTooltip,
+              }}
+              placeholders={{
+                name: walletNamePlaceholder,
+                percentage: percentagePlaceholder,
+              }}
+              errorMessages={{
+                portfolio: portfolioErrorMessages,
+                asset: assetErrorMessages,
+              }}
+              onUpdate={updateWallet}
+              onRemove={removeWallet}
+              onDistribute={distributeRemaining}
+              onAddAsset={addAsset}
+              onUpdateAsset={updateAsset}
+              onRemoveAsset={removeAsset}
+              onDistributeAsset={distributeAsset}
+              autoWallet={autoWallet}
             />
-            <span>{autoWalletLabel}</span>
-          </Toggle>
-        </TotalCapitalRow>
-      </TotalCapitalSection>
-
-      <WalletList>
-        {wallets.map((wallet) => (
-          <WalletItem
-            key={wallet.id}
-            wallet={wallet}
-            isValid={isValid}
-            totalPercentage={totalPercentage}
-            targetValue={(totalCapital * wallet.percentage) / 100}
-            labels={{
-              name: nameLabel,
-              percentage: percentageLabel,
-              current: currentValueLabel,
-              target: targetValueLabel,
-              balance: balanceLabel,
-              buy: buyLabel,
-              sell: sellLabel,
-              addAsset: addAssetLabel,
-              addAssetTooltip,
-              removeWalletTooltip,
-              removeAssetTooltip,
-              autoFillWalletTooltip,
-              autoFillAssetTooltip,
-            }}
-            placeholders={{
-              name: walletNamePlaceholder,
-              percentage: percentagePlaceholder,
-            }}
-            errorMessages={{
-              portfolio: portfolioErrorMessages,
-              asset: assetErrorMessages,
-            }}
-            onUpdate={updateWallet}
-            onRemove={removeWallet}
-            onDistribute={distributeRemaining}
-            onAddAsset={addAsset}
-            onUpdateAsset={updateAsset}
-            onRemoveAsset={removeAsset}
-            onDistributeAsset={distributeAsset}
-            autoWallet={autoWallet}
-          />
-        ))}
-      </WalletList>
-
-      <BaseButton onClick={addWallet}>{addWalletLabel}</BaseButton>
-
-      <PortfolioSummary
-        totalPercentage={totalPercentage}
-        isValid={isValid}
-        label={totalPercentageLabel}
-        errorMessage={getErrorMessage()}
-      />
+          ))}
+      </RightPanel>
     </Container>
   );
 }
