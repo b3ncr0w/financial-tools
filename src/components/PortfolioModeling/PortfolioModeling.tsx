@@ -14,6 +14,14 @@ import { TotalCapital } from "./TotalCapital";
 import { WalletItem } from "./WalletItem";
 import { PortfolioSummary } from "./Summary";
 import { Wallet, PortfolioModelingProps } from "./types";
+import { Tabs } from "./Tabs";
+
+interface TabData {
+  wallets: Wallet[];
+  totalCapital: number;
+  autoCapital: boolean;
+  autoWallet: boolean;
+}
 
 export function PortfolioModeling(props: PortfolioModelingProps) {
   const {
@@ -41,23 +49,58 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     defaultAssetName = "Asset {number}",
   } = props;
 
-  const [totalCapital, setTotalCapital] = useState<number>(defaultCapital);
-  const [wallets, setWallets] = useState<Wallet[]>(
-    (defaultWallets || []).map((wallet) => ({
-      id: crypto.randomUUID(),
-      name: wallet.name,
-      percentage: wallet.percentage,
-      currentValue: 0,
-      assets: (wallet.assets || []).map(asset => ({
+  const [tabs, setTabs] = useState<Array<{ id: string; name: string }>>([
+    { id: crypto.randomUUID(), name: 'Portfolio 1' }
+  ]);
+  const [activeTab, setActiveTab] = useState<string>(tabs[0].id);
+  const [tabsData, setTabsData] = useState<Record<string, TabData>>({
+    [tabs[0].id]: {
+      wallets: defaultWallets.map(wallet => ({
         id: crypto.randomUUID(),
-        name: asset.name,
-        percentage: asset.percentage,
-        currentValue: asset.currentValue || 0,
+        name: wallet.name,
+        percentage: wallet.percentage,
+        currentValue: 0,
+        assets: (wallet.assets || []).map(asset => ({
+          id: crypto.randomUUID(),
+          name: asset.name,
+          percentage: asset.percentage,
+          currentValue: asset.currentValue || 0,
+        })),
       })),
-    }))
-  );
-  const [autoCapital, setAutoCapital] = useState(defaultAutoCapital);
-  const [autoWallet, setAutoWallet] = useState(defaultAutoWallet);
+      totalCapital: defaultCapital,
+      autoCapital: defaultAutoCapital,
+      autoWallet: defaultAutoWallet,
+    }
+  });
+
+  const activeData = tabsData[activeTab];
+  const { wallets, totalCapital, autoCapital, autoWallet } = activeData;
+
+  const updateTabData = (data: Partial<TabData>) => {
+    setTabsData({
+      ...tabsData,
+      [activeTab]: {
+        ...tabsData[activeTab],
+        ...data
+      }
+    });
+  };
+
+  const setWallets = (newWallets: Wallet[]) => {
+    updateTabData({ wallets: newWallets });
+  };
+
+  const setTotalCapital = (value: number) => {
+    updateTabData({ totalCapital: value });
+  };
+
+  const setAutoCapital = (value: boolean) => {
+    updateTabData({ autoCapital: value });
+  };
+
+  const setAutoWallet = (value: boolean) => {
+    updateTabData({ autoWallet: value });
+  };
 
   useEffect(() => {
     if (autoCapital) {
@@ -226,6 +269,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   };
 
   const getPortfolioError = () => {
+    if (wallets.length === 0) return '';
     if (totalPercentage === 100) return '';
     
     const diff = Math.abs(totalPercentage - 100).toFixed(1);
@@ -276,8 +320,55 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     setAutoWallet(defaultAutoWallet);
   };
 
+  const addTab = () => {
+    const newTab = {
+      id: crypto.randomUUID(),
+      name: `Portfolio ${tabs.length + 1}`
+    };
+    setTabs([...tabs, newTab]);
+    setTabsData({
+      ...tabsData,
+      [newTab.id]: {
+        wallets: [],
+        totalCapital: defaultCapital,
+        autoCapital: defaultAutoCapital,
+        autoWallet: defaultAutoWallet,
+      }
+    });
+    setActiveTab(newTab.id);
+  };
+
+  const removeTab = (id: string) => {
+    if (tabs.length === 1) return;
+    
+    const newTabs = tabs.filter(tab => tab.id !== id);
+    const newTabsData = { ...tabsData };
+    delete newTabsData[id];
+    
+    setTabs(newTabs);
+    setTabsData(newTabsData);
+    
+    if (activeTab === id) {
+      setActiveTab(newTabs[0].id);
+    }
+  };
+
+  const renameTab = (id: string, name: string) => {
+    setTabs(tabs.map(tab => 
+      tab.id === id ? { ...tab, name } : tab
+    ));
+  };
+
   return (
     <Container>
+      <Tabs
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onAddTab={addTab}
+        onRemoveTab={removeTab}
+        onRenameTab={renameTab}
+      />
       <LeftPanel>
         <ActionsPanel>
           <BaseButton onClick={resetToDefault}>

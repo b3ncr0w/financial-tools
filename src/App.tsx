@@ -68,7 +68,7 @@ const Header = styled.header`
 
 const Main = styled.main`
   flex: 1;
-  padding: var(--spacing-lg) var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-sm);
   display: flex;
   flex-direction: column;
 `;

@@ -15,7 +15,7 @@ content:
       addWalletLabel: + Dodaj portfel
       buyLabel: Dokup
       sellLabel: Sprzedaj
-      addAssetLabel: + Dodaj asset
+      addAssetLabel: + Dodaj walor
       resetLabel: Resetuj
       autoCapitalLabel: Automatyczny kapitał
       autoWalletLabel: Automatyczny portfel
@@ -25,8 +25,8 @@ content:
         exceedsTotal: Suma procentów portfeli przekracza 100% o {value}%
         belowTotal: Do 100% sumy portfeli brakuje {value}%
       assetErrorMessages:
-        exceedsTotal: Suma procentów assetów w portfelu "{wallet}" przekracza 100% o {value}%
-        belowTotal: Do 100% sumy assetów w portfelu "{wallet}" brakuje {value}%
+        exceedsTotal: Suma procentów walorów w portfelu "{wallet}" przekracza 100% o {value}%
+        belowTotal: Do 100% sumy walorów w portfelu "{wallet}" brakuje {value}%
 
       # Wartości domyślne
       defaultAutoCapital: false
