@@ -25,26 +25,16 @@ interface WalletItemProps {
   totalPercentage: number;
   targetValue: number;
   labels: {
-    name: string;
-    percentage: string;
-    current: string;
-    target: string;
-    balance: string;
     buy: string;
     sell: string;
     addAsset: string;
-    addAssetTooltip: string;
-    removeWalletTooltip: string;
-    removeAssetTooltip: string;
-    autoFillWalletTooltip: string;
-    autoFillAssetTooltip: string;
   };
   placeholders: {
     name: string;
     percentage: string;
   };
   errorMessages: {
-    portfolio: {
+    wallet: {
       exceedsTotal: string;
       belowTotal: string;
     };
@@ -166,7 +156,6 @@ export function WalletItem({
 
       <AddAssetButton 
         onClick={() => onAddAsset(wallet.id)}
-        title="Dodaj asset do portfela"
       >
         + Dodaj asset
       </AddAssetButton>

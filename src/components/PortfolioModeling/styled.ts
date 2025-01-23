@@ -154,14 +154,15 @@ export const LeftPanel = styled.div`
   flex-direction: column;
   gap: ${SPACING.gap};
   position: sticky;
-  top: 24px;
   align-self: flex-start;
+  align-items: center;
   justify-content: center;
   width: 350px;
   flex-shrink: 0;
   padding: 16px;
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
+    align-items: center;
     position: static;
     flex-shrink: 0;
   }

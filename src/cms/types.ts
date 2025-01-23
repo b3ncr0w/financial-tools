@@ -1,3 +1,5 @@
+import { PortfolioModelingProps } from '../components/PortfolioModeling/types';
+
 export type SupportedLanguage = "en" | "pl";
 export type Theme = "light" | "dark";
 
@@ -35,33 +37,10 @@ export interface ComponentProps {
 }
 
 export interface ContentBlock {
-  type: 'heading' | 'paragraph' | 'markdown' | 'component';
+  type: string;
   text?: string;
   name?: string;
-  props?: {
-    totalCapitalLabel: string;
-    addWalletLabel: string;
-    nameLabel: string;
-    percentageLabel: string;
-    totalPercentageLabel: string;
-    walletNamePlaceholder: string;
-    percentagePlaceholder: string;
-    totalCapitalPlaceholder: string;
-    currentValueLabel: string;
-    targetValueLabel: string;
-    balanceLabel: string;
-    buyLabel: string;
-    sellLabel: string;
-    defaultCapital?: number;
-    defaultWallets?: Array<{
-      name: string;
-      percentage: number;
-    }>;
-    errorMessages: {
-      exceedsTotal: string;
-      belowTotal: string;
-    };
-  };
+  props?: PortfolioModelingProps;
 }
 
 export interface Article {

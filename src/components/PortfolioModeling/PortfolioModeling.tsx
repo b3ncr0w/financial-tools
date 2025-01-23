@@ -19,22 +19,10 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   const {
     totalCapitalLabel = "Total Capital",
     addWalletLabel = "Add Wallet",
-    nameLabel = "Name",
-    percentageLabel = "Percentage",
-    walletNamePlaceholder = "Enter wallet name",
-    percentagePlaceholder = "Enter percentage",
-    currentValueLabel = "Current Value",
-    targetValueLabel = "Target Value",
-    balanceLabel = "Balance",
     buyLabel = "Buy",
     sellLabel = "Sell",
     addAssetLabel = "+ Add asset",
-    addAssetTooltip = "Add asset to wallet",
-    removeWalletTooltip = "Remove wallet",
-    removeAssetTooltip = "Remove asset",
-    autoFillWalletTooltip = "Set to {value}%",
-    autoFillAssetTooltip = "Set to {value}%",
-    portfolioErrorMessages = {
+    walletErrorMessages = {
       exceedsTotal: "Portfolio total exceeds 100% by {value}%",
       belowTotal: "Portfolio total is below 100% by {value}%"
     },
@@ -49,6 +37,8 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     defaultAutoCapital = false,
     defaultAutoWallet = false,
     resetLabel = "Resetuj",
+    defaultWalletName = "Wallet {number}",
+    defaultAssetName = "Asset {number}",
   } = props;
 
   const [totalCapital, setTotalCapital] = useState<number>(defaultCapital);
@@ -120,7 +110,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
       ...wallets,
       {
         id: crypto.randomUUID(),
-        name: `Wallet ${wallets.length + 1}`,
+        name: defaultWalletName.replace('{number}', String(wallets.length + 1)),
         percentage: 0,
         currentValue: 0,
         assets: [],
@@ -138,7 +128,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
                 ...wallet.assets,
                 {
                   id: crypto.randomUUID(),
-                  name: `Asset ${wallet.assets.length + 1}`,
+                  name: defaultAssetName.replace('{number}', String(wallet.assets.length + 1)),
                   percentage: 0,
                   currentValue: 0,
                 },
@@ -339,26 +329,16 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
               totalPercentage={totalPercentage}
               targetValue={(totalCapital * wallet.percentage) / 100}
               labels={{
-                name: nameLabel,
-                percentage: percentageLabel,
-                current: currentValueLabel,
-                target: targetValueLabel,
-                balance: balanceLabel,
                 buy: buyLabel,
                 sell: sellLabel,
                 addAsset: addAssetLabel,
-                addAssetTooltip,
-                removeWalletTooltip,
-                removeAssetTooltip,
-                autoFillWalletTooltip,
-                autoFillAssetTooltip,
               }}
               placeholders={{
-                name: walletNamePlaceholder,
-                percentage: percentagePlaceholder,
+                name: defaultWalletName.replace('{number}', String(wallets.indexOf(wallet) + 1)),
+                percentage: defaultAssetName.replace('{number}', String(wallet.assets.length + 1)),
               }}
               errorMessages={{
-                portfolio: portfolioErrorMessages,
+                wallet: walletErrorMessages,
                 asset: assetErrorMessages,
               }}
               onUpdate={updateWallet}

@@ -21,11 +21,6 @@ interface AssetItemProps {
   totalPercentage: number;
   targetValue: number;
   labels: {
-    name: string;
-    percentage: string;
-    current: string;
-    target: string;
-    balance: string;
     buy: string;
     sell: string;
   };
@@ -75,7 +70,6 @@ export function AssetItem({
         {!assetsValid && (
           <AutoFillButton 
             onClick={() => onDistribute(walletId, asset.id)}
-            title={`Ustaw na ${(100 - (totalPercentage - asset.percentage)).toFixed(1)}%`}
           >
             {totalPercentage > 100 
               ? `-${(totalPercentage - 100).toFixed(1)}` 

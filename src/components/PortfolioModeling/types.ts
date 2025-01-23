@@ -14,27 +14,18 @@ export interface Wallet {
 }
 
 export interface PortfolioModelingProps {
+  // Główne etykiety
   totalCapitalLabel?: string;
   addWalletLabel?: string;
-  nameLabel?: string;
-  percentageLabel?: string;
-  totalPercentageLabel?: string;
-  walletNamePlaceholder?: string;
-  percentagePlaceholder?: string;
-  totalCapitalPlaceholder?: string;
-  currentValueLabel?: string;
-  targetValueLabel?: string;
-  balanceLabel?: string;
   buyLabel?: string;
   sellLabel?: string;
-  useCurrentSumLabel?: string;
   addAssetLabel?: string;
-  addAssetTooltip?: string;
-  removeWalletTooltip?: string;
-  removeAssetTooltip?: string;
-  autoFillWalletTooltip?: string;
-  autoFillAssetTooltip?: string;
-  portfolioErrorMessages?: {
+  resetLabel?: string;
+  autoCapitalLabel?: string;
+  autoWalletLabel?: string;
+
+  // Komunikaty błędów
+  walletErrorMessages?: {
     exceedsTotal: string;
     belowTotal: string;
   };
@@ -42,6 +33,8 @@ export interface PortfolioModelingProps {
     exceedsTotal: string;
     belowTotal: string;
   };
+
+  // Wartości domyślne
   defaultCapital?: number;
   defaultWallets?: Array<{
     name: string;
@@ -52,9 +45,8 @@ export interface PortfolioModelingProps {
       currentValue?: number;
     }>;
   }>;
-  resetLabel?: string;
-  autoCapitalLabel?: string;
-  autoWalletLabel?: string;
   defaultAutoCapital?: boolean;
   defaultAutoWallet?: boolean;
+  defaultWalletName?: string;
+  defaultAssetName?: string;
 } 

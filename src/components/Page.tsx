@@ -24,7 +24,14 @@ export function Page({ content = [], articles }: PageProps) {
             case 'component':
               switch (block.name) {
                 case 'portfolio-modeling':
-                  return <PortfolioModeling key={index} {...block.props} />;
+                  return (
+                    <PortfolioModeling
+                      key={index}
+                      {...(block.props || {})}
+                      defaultWalletName={(block.props?.defaultWalletName) || "Portfel {number}"}
+                      defaultAssetName={(block.props?.defaultAssetName) || "Asset {number}"}
+                    />
+                  );
                 default:
                   return null;
               }
