@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   Container,
   WalletList,
-  HeaderRow,
   BaseButton,
   TotalCapitalSection,
   TotalCapitalRow,
@@ -206,14 +205,6 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
           </BaseButton>
         </TotalCapitalRow>
       </TotalCapitalSection>
-
-      <HeaderRow>
-        <div>{nameLabel}</div>
-        <div>{percentageLabel}</div>
-        <div>{currentValueLabel}</div>
-        <div>{targetValueLabel}</div>
-        <div></div>
-      </HeaderRow>
 
       <WalletList>
         {wallets.map((wallet) => (

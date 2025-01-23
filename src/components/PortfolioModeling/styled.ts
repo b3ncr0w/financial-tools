@@ -4,86 +4,21 @@ import { ChangeEvent } from 'react';
 export type InputChangeEvent = ChangeEvent<HTMLInputElement>;
 
 const SPACING = {
-  gap: '16px',
+  gap: '24px',
   padding: '16px',
   itemPadding: '8px 16px',
 } as const;
 
 const COLUMN_WIDTHS = {
   name: '150px',
-  percentage: '50px',
+  percentage: '80px',
   value: '100px',
-  target: '150px',
+  target: '200px',
   action: '40px'
 } as const;
 
-export const Container = styled.div`
-  width: fit-content;
-  margin: 0 auto;
-  padding: ${SPACING.padding};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: ${SPACING.gap};
-`;
-
-export const ItemContainer = styled.div`
-  display: flex;
-  padding: ${SPACING.itemPadding};
-  gap: ${SPACING.gap};
-  align-items: center;
-  height: 48px;
-
-  & > *:nth-child(1) { min-width: ${COLUMN_WIDTHS.name}; max-width: ${COLUMN_WIDTHS.name}; }
-  & > *:nth-child(2) { min-width: ${COLUMN_WIDTHS.percentage}; max-width: ${COLUMN_WIDTHS.percentage}; }
-  & > *:nth-child(3) { min-width: ${COLUMN_WIDTHS.value}; max-width: ${COLUMN_WIDTHS.value}; }
-  & > *:nth-child(4) { min-width: ${COLUMN_WIDTHS.target}; max-width: ${COLUMN_WIDTHS.target}; }
-  & > *:nth-child(5) { min-width: ${COLUMN_WIDTHS.action}; max-width: ${COLUMN_WIDTHS.action}; }
-`;
-
-export const HeaderRow = styled(ItemContainer)`
-  display: flex;
-  padding: 0 ${SPACING.padding};
-  gap: ${SPACING.gap};
-  align-items: center;
-  margin-left: 12px;
-  transform: translateY(12px);
-  
-  & > * {
-    font-size: 0.75em;
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
-    font-weight: 500;
-    text-align: center;
-    padding: 0 8.5px;
-  }
-
-  & > *:nth-child(1) { min-width: ${COLUMN_WIDTHS.name}; max-width: ${COLUMN_WIDTHS.name}; }
-  & > *:nth-child(2) { min-width: ${COLUMN_WIDTHS.percentage}; max-width: ${COLUMN_WIDTHS.percentage}; }
-  & > *:nth-child(3) { min-width: ${COLUMN_WIDTHS.value}; max-width: ${COLUMN_WIDTHS.value}; }
-  & > *:nth-child(4) { min-width: ${COLUMN_WIDTHS.target}; max-width: ${COLUMN_WIDTHS.target}; }
-  & > *:nth-child(5) { min-width: ${COLUMN_WIDTHS.action}; max-width: ${COLUMN_WIDTHS.action}; }
-`;
-
-export const WalletList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-`;
-
-export const WalletPanel = styled.div`
-  width: fit-content;
-  display: flex;
-  flex-direction: column;
-  background: var(--color-surface);
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
-  overflow: hidden;
-  padding: 0;
-`;
-
 export const CompactInput = styled.input`
-  height: 32px;
+  height: 42px;
   padding: 0 8px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
@@ -120,19 +55,119 @@ export const ValueDisplay = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100%;
   text-align: center;
+  box-sizing: border-box;
+`;
+
+const Column = styled.div`
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 4px;
+`;
+
+export const NameColumn = styled(Column)`
+  width: ${COLUMN_WIDTHS.name};
+
+  ${CompactInput} {
+    width: 100%;
+  }
+`;
+
+export const PercentageColumn = styled(Column)`
+  width: ${COLUMN_WIDTHS.percentage};
+  position: relative;
+
+  ${CompactInput} {
+    box-sizing: border-box;
+    width: 100%;
+    padding-right: 20px;
+    text-align: center;
+  }
+
+  &::after {
+    content: '%';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-secondary);
+    font-size: 0.9em;
+    pointer-events: none;
+    line-height: 1;
+  }
+`;
+
+export const ValueColumn = styled(Column)`
+  width: ${COLUMN_WIDTHS.value};
+
+  ${CompactInput} {
+    width: 100%;
+  }
+`;
+
+export const TargetColumn = styled(Column)`
+  width: ${COLUMN_WIDTHS.target};
+
+  ${ValueDisplay} {
+    width: 100%;
+  }
+`;
+
+export const ActionColumn = styled(Column)`
+  width: ${COLUMN_WIDTHS.action};
+  display: flex;
+  justify-content: center;
+  padding: 0;
+`;
+
+export const Container = styled.div`
+  width: fit-content;
+  margin: 0 auto;
+  padding: ${SPACING.padding};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${SPACING.gap};
+`;
+
+export const ItemContainer = styled.div`
+  display: flex;
+  padding: ${SPACING.itemPadding};
+  align-items: center;
+  height: 48px;
+  position: relative;
+`;
+
+export const WalletList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${SPACING.gap};
+`;
+
+export const WalletPanel = styled.div`
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  padding: 0;
 `;
 
 export const Value = styled.div`
   font-weight: 500;
   font-size: 0.95em;
+  width: 100%;
+  text-align: center;
 `;
 
 export const Balance = styled.div<{ $positive: boolean }>`
   color: ${props => props.$positive ? 'var(--color-success)' : 'var(--color-error)'};
-  font-size: 0.85em;
+  font-size: 0.8em;
   margin-top: 2px;
+  width: 100%;
+  text-align: center;
 `;
 
 export const ActionButton = styled.button`
@@ -173,24 +208,26 @@ export const BaseButton = styled.button`
   }
 `;
 
-export const AddButton = styled(BaseButton)``;
-
 export const AutoFillButton = styled(ActionButton)`
-  width: 28px;
-  height: 28px;
+  position: absolute;
+  left: calc(${COLUMN_WIDTHS.name} + ${COLUMN_WIDTHS.percentage} - 50px);
+  top: -18px;
+  height: 24px;
+  width: 50px;
   background: var(--color-primary);
   color: white;
-  font-size: 1em;
+  font-size: 0.85em;
+  border-radius: 12px;
+  z-index: 1;
   
   &:hover {
     opacity: 0.9;
     transform: scale(1.05);
+    background: var(--color-primary);
   }
 `;
 
 export const WalletAssets = styled.div`
-  margin: 0;
-  padding: 0;
   background: var(--color-background);
   border-top: 1px solid var(--color-border);
 
@@ -204,20 +241,8 @@ export const WalletAssets = styled.div`
   }
 `;
 
-export const AddAssetButton = styled(AddButton)`
-  margin: 0;
-  padding: ${SPACING.itemPadding};
-  font-size: 0.9em;
-  width: 100%;
-  height: 48px;
-  border-radius: 0;
-  border: none;
-  border-top: 1px solid var(--color-border);
-  
-  &:hover {
-    background: var(--color-background);
-    border-color: var(--color-border);
-  }
+export const AddAssetButton = styled(BaseButton)`
+  border-radius: 12px;
 `;
 
 export const TotalCapitalSection = styled.div`
@@ -249,8 +274,8 @@ export const Label = styled.label`
 
 export const Summary = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--color-surface);
   border-radius: 12px;
@@ -260,6 +285,7 @@ export const Summary = styled.div`
 export const SummaryItem = styled.div`
   font-size: 0.95em;
   font-weight: 500;
+  text-align: center;
   
   .valid {
     color: var(--color-success);
@@ -275,4 +301,5 @@ export const SummaryItem = styled.div`
 export const ErrorMessage = styled.div`
   color: var(--color-error);
   font-size: 0.9em;
+  text-align: center;
 `;

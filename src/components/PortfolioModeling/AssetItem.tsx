@@ -5,7 +5,12 @@ import {
   ValueDisplay,
   Value,
   Balance,
-  InputChangeEvent
+  InputChangeEvent,
+  NameColumn,
+  PercentageColumn,
+  ValueColumn,
+  TargetColumn,
+  ActionColumn
 } from './styled';
 import { Asset } from './types';
 
@@ -46,39 +51,49 @@ export function AssetItem({
 
   return (
     <ItemContainer>
-      <CompactInput
-        type="text"
-        value={asset.name}
-        onChange={(e: InputChangeEvent) => onUpdate(walletId, asset.id, 'name', e.target.value)}
-        placeholder={placeholders.name}
-      />
+      <NameColumn>
+        <CompactInput
+          type="text"
+          value={asset.name}
+          onChange={(e: InputChangeEvent) => onUpdate(walletId, asset.id, 'name', e.target.value)}
+          placeholder={placeholders.name}
+        />
+      </NameColumn>
 
-      <CompactInput
-        type="number"
-        value={asset.percentage || ''}
-        onChange={(e: InputChangeEvent) => onUpdate(walletId, asset.id, 'percentage', Number(e.target.value))}
-        placeholder="0"
-        min="0"
-        max="100"
-        step="5"
-      />
+      <PercentageColumn>
+        <CompactInput
+          type="number"
+          value={asset.percentage || ''}
+          onChange={(e: InputChangeEvent) => onUpdate(walletId, asset.id, 'percentage', Number(e.target.value))}
+          placeholder="0"
+          min="0"
+          max="100"
+          step="5"
+        />
+      </PercentageColumn>
 
-      <CompactInput
-        type="number"
-        value={asset.currentValue || ''}
-        onChange={(e: InputChangeEvent) => onUpdate(walletId, asset.id, 'currentValue', Number(e.target.value))}
-        placeholder="0"
-        step="100"
-      />
+      <ValueColumn>
+        <CompactInput
+          type="number"
+          value={asset.currentValue || ''}
+          onChange={(e: InputChangeEvent) => onUpdate(walletId, asset.id, 'currentValue', Number(e.target.value))}
+          placeholder="0"
+          step="100"
+        />
+      </ValueColumn>
 
-      <ValueDisplay>
-        <Value>{isValid ? targetValue.toFixed(2) : '-'}</Value>
-        <Balance $positive={balance > 0}>
-          {isValid ? `${balance > 0 ? labels.buy : labels.sell}: ${Math.abs(balance).toFixed(2)}` : '-'}
-        </Balance>
-      </ValueDisplay>
+      <TargetColumn>
+        <ValueDisplay>
+          <Value>{isValid ? targetValue.toFixed(2) : '\u00A0-\u00A0'}</Value>
+          <Balance $positive={balance > 0}>
+            {isValid ? `${balance > 0 ? labels.buy : labels.sell}: ${Math.abs(balance).toFixed(2)}` : '\u00A0-\u00A0'}
+          </Balance>
+        </ValueDisplay>
+      </TargetColumn>
 
-      <ActionButton onClick={() => onRemove(walletId, asset.id)}>×</ActionButton>
+      <ActionColumn>
+        <ActionButton onClick={() => onRemove(walletId, asset.id)}>×</ActionButton>
+      </ActionColumn>
     </ItemContainer>
   );
 } 
