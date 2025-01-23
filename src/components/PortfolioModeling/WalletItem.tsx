@@ -8,11 +8,11 @@ import {
   Balance,
   WalletAssets,
   AddAssetButton,
-  WalletPanel
+  WalletPanel,
+  InputChangeEvent
 } from './styled';
 import { AssetItem } from './AssetItem';
 import { Wallet } from './types';
-import { InputChangeEvent } from './styled/common';
 
 interface WalletItemProps {
   wallet: Wallet;

@@ -4,10 +4,10 @@ import {
   ActionButton,
   ValueDisplay,
   Value,
-  Balance
+  Balance,
+  InputChangeEvent
 } from './styled';
 import { Asset } from './types';
-import { InputChangeEvent } from './styled/common';
 
 interface AssetItemProps {
   asset: Asset;

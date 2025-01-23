@@ -1,16 +1,13 @@
 import { useState } from "react";
 import {
   Container,
-  AddButton,
   WalletList,
   HeaderRow,
-} from "./styled";
-import { 
+  BaseButton,
   TotalCapitalSection,
   TotalCapitalRow,
-  TransferButton,
   Label
-} from './styled/common';
+} from "./styled";
 import { TotalCapital } from "./TotalCapital";
 import { WalletItem } from "./WalletItem";
 import { PortfolioSummary } from "./Summary";
@@ -201,12 +198,12 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
             onChange={setTotalCapital}
             placeholder={totalCapitalPlaceholder}
           />
-          <TransferButton
+          <BaseButton
             onClick={transferCurrentSum}
             title="Użyj sumy obecnych wartości jako kapitał całkowity"
           >
-            ↑ Użyj sumy
-          </TransferButton>
+            Użyj sumy obecnych wartości portfeli
+          </BaseButton>
         </TotalCapitalRow>
       </TotalCapitalSection>
 
@@ -250,7 +247,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         ))}
       </WalletList>
 
-      <AddButton onClick={addWallet}>{addWalletLabel}</AddButton>
+      <BaseButton onClick={addWallet}>{addWalletLabel}</BaseButton>
 
       <PortfolioSummary
         totalPercentage={totalPercentage}

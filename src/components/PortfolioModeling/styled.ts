@@ -1,4 +1,7 @@
 import styled from 'styled-components';
+import { ChangeEvent } from 'react';
+
+export type InputChangeEvent = ChangeEvent<HTMLInputElement>;
 
 const SPACING = {
   gap: '16px',
@@ -153,22 +156,24 @@ export const ActionButton = styled.button`
   }
 `;
 
-export const AddButton = styled.button`
+export const BaseButton = styled.button`
   padding: 12px;
-  border: 2px dashed var(--color-border);
+  border: 1px dashed var(--color-border);
+  border-radius: 22px;
   background: var(--color-surface);
   color: var(--color-text-secondary);
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.95em;
+  font-size: 0.9em;
   font-weight: 500;
-  transition: all 0.2s;
+  cursor: pointer;
+  transition: all 0.15s;
   
   &:hover {
-    background: var(--color-background);
-    color: var(--color-text);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 `;
+
+export const AddButton = styled(BaseButton)``;
 
 export const AutoFillButton = styled(ActionButton)`
   width: 28px;
@@ -213,4 +218,61 @@ export const AddAssetButton = styled(AddButton)`
     background: var(--color-background);
     border-color: var(--color-border);
   }
+`;
+
+export const TotalCapitalSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: fit-content;
+`;
+
+export const TotalCapitalRow = styled.div`
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+
+  input {
+    box-sizing: border-box;
+    width: 100%;
+  }
+`;
+
+export const Label = styled.label`
+  font-size: 0.85em;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  margin-left: 8px;
+`;
+
+export const Summary = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-surface);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+`;
+
+export const SummaryItem = styled.div`
+  font-size: 0.95em;
+  font-weight: 500;
+  
+  .valid {
+    color: var(--color-success);
+    font-weight: 600;
+  }
+  
+  .invalid {
+    color: var(--color-error);
+    font-weight: 600;
+  }
+`;
+
+export const ErrorMessage = styled.div`
+  color: var(--color-error);
+  font-size: 0.9em;
 `;
