@@ -2,31 +2,74 @@ id: portfolio-modeling
 menuTitle: Modelowanie portfela
 order: 1
 slug: /modelowanie-portfela
+type: page
+title: Modelowanie Portfela
+description: Narzędzie do modelowania portfela inwestycyjnego
+
 content:
   - type: component
     name: portfolio-modeling
     props:
-      totalCapitalLabel: Całkowity kapitał
+      totalCapitalLabel: Kapitał całkowity
       addWalletLabel: Dodaj portfel
       nameLabel: Nazwa
       percentageLabel: Procent
       totalPercentageLabel: Suma procentów
-      walletNamePlaceholder: Wprowadź nazwę portfela
-      percentagePlaceholder: Wprowadź procent
-      totalCapitalPlaceholder: Wprowadź całkowity kapitał
       currentValueLabel: Obecna wartość
       targetValueLabel: Wartość docelowa
       balanceLabel: Bilans
-      buyLabel: Do kupienia
-      sellLabel: Do sprzedania
-      errorMessages:
-        exceedsTotal: Suma przekracza 100% o {value}%. Użyj przycisków lub wpisz wartość, aby poprawić rozkład.
-        belowTotal: Brakuje {value}% do 100%. Użyj przycisków lub wpisz wartość, aby poprawić rozkład.
+      buyLabel: Dokup
+      sellLabel: Sprzedaj
+      
+      walletNamePlaceholder: Wpisz nazwę portfela
+      percentagePlaceholder: Wpisz procent
+      totalCapitalPlaceholder: Wpisz kapitał całkowity
+      
+      useCurrentSumLabel: Użyj sumy portfeli jako kapitału
+      addAssetLabel: + Dodaj asset
+      addAssetTooltip: Dodaj asset do portfela
+      removeWalletTooltip: Usuń portfel
+      removeAssetTooltip: Usuń asset
+      autoFillWalletTooltip: Ustaw na {value}%
+      autoFillAssetTooltip: Ustaw na {value}%
+      resetLabel: Resetuj
+      
+      portfolioErrorMessages:
+        exceedsTotal: Suma procentów portfeli przekracza 100% o {value}%
+        belowTotal: Do 100% sumy portfeli brakuje {value}%
+      
+      assetErrorMessages:
+        exceedsTotal: Suma procentów assetów w portfelu "{wallet}" przekracza 100% o {value}%
+        belowTotal: Do 100% sumy assetów w portfelu "{wallet}" brakuje {value}%
       defaultCapital: 10000
       defaultWallets:
-        - name: Trading
-          percentage: 10
         - name: Bezpieczny
           percentage: 60
+          assets:
+            - name: BTC
+              percentage: 25
+            - name: ETH
+              percentage: 70
+            - name: TAO
+              percentage: 3
+            - name: FET
+              percentage: 2
         - name: Ryzykowny
           percentage: 30
+          assets:
+            - name: ETH
+              percentage: 60
+            - name: SUI
+              percentage: 10
+            - name: VIRTUAL
+              percentage: 10
+            - name: BONK
+              percentage: 10
+            - name: ONDO
+              percentage: 10
+        - name: Trading
+          percentage: 10
+      autoCapitalLabel: Automatyczny kapitał (Suma portfeli)
+      autoWalletLabel: Automatyczny portfel (Suma assetów)
+      defaultAutoCapital: false
+      defaultAutoWallet: true

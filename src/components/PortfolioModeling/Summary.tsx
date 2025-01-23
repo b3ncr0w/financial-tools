@@ -1,4 +1,4 @@
-import { Summary, SummaryItem, ErrorMessage } from './styled';
+import { Summary, SummaryItem } from './styled';
 
 interface SummaryProps {
   totalPercentage: number;
@@ -7,17 +7,17 @@ interface SummaryProps {
   errorMessage: string;
 }
 
-export function PortfolioSummary({ totalPercentage, isValid, label, errorMessage }: SummaryProps) {
+export function PortfolioSummary({
+  isValid,
+  errorMessage,
+}: SummaryProps) {
+  if (isValid) return null;
+
   return (
     <Summary>
       <SummaryItem>
-        {label}: <span className={isValid ? 'valid' : 'invalid'}>
-          {totalPercentage}%
-        </span>
+        <span className="invalid">{errorMessage}</span>
       </SummaryItem>
-      {!isValid && (
-        <ErrorMessage>{errorMessage}</ErrorMessage>
-      )}
     </Summary>
   );
 } 

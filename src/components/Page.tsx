@@ -47,7 +47,7 @@ const Container = styled.div`
 const Content = styled.article`
   width: 100%;
   max-width: 800px;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-sm);
   border-radius: 8px;
   color: var(--color-text);
 `;

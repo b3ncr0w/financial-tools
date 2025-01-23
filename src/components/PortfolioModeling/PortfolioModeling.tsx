@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   WalletList,
   BaseButton,
   TotalCapitalSection,
   TotalCapitalRow,
-  Label
+  Label,
+  ActionsPanel,
+  Toggle
 } from "./styled";
 import { TotalCapital } from "./TotalCapital";
 import { WalletItem } from "./WalletItem";
@@ -21,18 +23,31 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     totalPercentageLabel = "Total Percentage",
     walletNamePlaceholder = "Enter wallet name",
     percentagePlaceholder = "Enter percentage",
-    totalCapitalPlaceholder = "Enter total capital",
     currentValueLabel = "Current Value",
     targetValueLabel = "Target Value",
     balanceLabel = "Balance",
     buyLabel = "Buy",
     sellLabel = "Sell",
+    addAssetLabel = "+ Add asset",
+    addAssetTooltip = "Add asset to wallet",
+    removeWalletTooltip = "Remove wallet",
+    removeAssetTooltip = "Remove asset",
+    autoFillWalletTooltip = "Set to {value}%",
+    autoFillAssetTooltip = "Set to {value}%",
+    portfolioErrorMessages = {
+      exceedsTotal: "Portfolio total exceeds 100% by {value}%",
+      belowTotal: "Portfolio total is below 100% by {value}%"
+    },
+    assetErrorMessages = {
+      exceedsTotal: "Assets total in wallet \"{wallet}\" exceeds 100% by {value}%",
+      belowTotal: "Assets total in wallet \"{wallet}\" is below 100% by {value}%"
+    },
     defaultCapital = 0,
     defaultWallets = [],
-    errorMessages = {
-      exceedsTotal: "Total exceeds 100% by {value}%",
-      belowTotal: "Total is below 100% by {value}%",
-    },
+    autoCapitalLabel = "Auto Capital",
+    autoWalletLabel = "Auto Wallet",
+    defaultAutoCapital = false,
+    defaultAutoWallet = false,
   } = props;
 
   const [totalCapital, setTotalCapital] = useState<number>(defaultCapital);
@@ -42,9 +57,34 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
       name: wallet.name,
       percentage: wallet.percentage,
       currentValue: 0,
-      assets: [],
+      assets: (wallet.assets || []).map(asset => ({
+        id: crypto.randomUUID(),
+        name: asset.name,
+        percentage: asset.percentage,
+        currentValue: asset.currentValue || 0,
+      })),
     }))
   );
+  const [autoCapital, setAutoCapital] = useState(defaultAutoCapital);
+  const [autoWallet, setAutoWallet] = useState(defaultAutoWallet);
+
+  useEffect(() => {
+    if (autoCapital) {
+      const sum = wallets.reduce((sum, wallet) => sum + wallet.currentValue, 0);
+      if (sum > 0) {
+        setTotalCapital(sum);
+      }
+    }
+  }, [autoCapital]);
+
+  useEffect(() => {
+    if (autoWallet) {
+      setWallets(wallets.map(wallet => ({
+        ...wallet,
+        currentValue: wallet.assets.reduce((sum, asset) => sum + asset.currentValue, 0)
+      })));
+    }
+  }, [autoWallet, wallets]);
 
   const addWallet = () => {
     setWallets([
@@ -169,8 +209,8 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   const getErrorMessage = () => {
     const diff = Math.abs(totalPercentage - 100).toFixed(1);
     return totalPercentage > 100
-      ? errorMessages.exceedsTotal.replace("{value}", diff)
-      : errorMessages.belowTotal.replace("{value}", diff);
+      ? `Suma procentów portfeli przekracza 100% o ${diff}%`
+      : `Do 100% sumy portfeli brakuje ${diff}%`;
   };
 
   const totalPercentage = wallets.reduce(
@@ -179,30 +219,61 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   );
   const isValid = totalPercentage === 100;
 
-  const transferCurrentSum = () => {
-    const currentSum = wallets.reduce(
-      (sum, wallet) => sum + wallet.currentValue,
-      0
+  const resetToDefault = () => {
+    // Najpierw resetujemy wartości
+    setWallets(
+      (defaultWallets || []).map((wallet) => ({
+        id: crypto.randomUUID(),
+        name: wallet.name,
+        percentage: wallet.percentage,
+        currentValue: 0,
+        assets: (wallet.assets || []).map(asset => ({
+          id: crypto.randomUUID(),
+          name: asset.name,
+          percentage: asset.percentage,
+          currentValue: asset.currentValue || 0,
+        })),
+      }))
     );
-    setTotalCapital(currentSum);
+    setTotalCapital(defaultCapital);
+
+    // Potem ustawiamy flagi
+    setAutoCapital(defaultAutoCapital);
+    setAutoWallet(defaultAutoWallet);
   };
 
   return (
     <Container>
+      <ActionsPanel>
+        <BaseButton onClick={resetToDefault}>
+          Resetuj
+        </BaseButton>
+      </ActionsPanel>
+
       <TotalCapitalSection>
         <Label>{totalCapitalLabel}</Label>
         <TotalCapitalRow>
           <TotalCapital
             value={totalCapital}
             onChange={setTotalCapital}
-            placeholder={totalCapitalPlaceholder}
+            disabled={autoCapital}
           />
-          <BaseButton
-            onClick={transferCurrentSum}
-            title="Użyj sumy obecnych wartości jako kapitał całkowity"
-          >
-            Użyj sumy obecnych wartości portfeli
-          </BaseButton>
+          <Toggle>
+            <input
+              type="checkbox"
+              checked={autoCapital}
+              onChange={(e) => setAutoCapital(e.target.checked)}
+            />
+            <span>{autoCapitalLabel}</span>
+          </Toggle>
+          <Toggle>
+            <input
+              type="checkbox"
+              checked={autoWallet}
+              onChange={(e) => setAutoWallet(e.target.checked)}
+            />
+            <span>{autoWalletLabel}</span>
+          </Toggle>
         </TotalCapitalRow>
       </TotalCapitalSection>
 
@@ -222,10 +293,20 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
               balance: balanceLabel,
               buy: buyLabel,
               sell: sellLabel,
+              addAsset: addAssetLabel,
+              addAssetTooltip,
+              removeWalletTooltip,
+              removeAssetTooltip,
+              autoFillWalletTooltip,
+              autoFillAssetTooltip,
             }}
             placeholders={{
               name: walletNamePlaceholder,
               percentage: percentagePlaceholder,
+            }}
+            errorMessages={{
+              portfolio: portfolioErrorMessages,
+              asset: assetErrorMessages,
             }}
             onUpdate={updateWallet}
             onRemove={removeWallet}
@@ -234,6 +315,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
             onUpdateAsset={updateAsset}
             onRemoveAsset={removeAsset}
             onDistributeAsset={distributeAsset}
+            autoWallet={autoWallet}
           />
         ))}
       </WalletList>

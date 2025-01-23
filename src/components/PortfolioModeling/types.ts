@@ -27,13 +27,34 @@ export interface PortfolioModelingProps {
   balanceLabel?: string;
   buyLabel?: string;
   sellLabel?: string;
+  useCurrentSumLabel?: string;
+  addAssetLabel?: string;
+  addAssetTooltip?: string;
+  removeWalletTooltip?: string;
+  removeAssetTooltip?: string;
+  autoFillWalletTooltip?: string;
+  autoFillAssetTooltip?: string;
+  portfolioErrorMessages?: {
+    exceedsTotal: string;
+    belowTotal: string;
+  };
+  assetErrorMessages?: {
+    exceedsTotal: string;
+    belowTotal: string;
+  };
   defaultCapital?: number;
   defaultWallets?: Array<{
     name: string;
     percentage: number;
+    assets?: Array<{
+      name: string;
+      percentage: number;
+      currentValue?: number;
+    }>;
   }>;
-  errorMessages?: {
-    exceedsTotal: string;
-    belowTotal: string;
-  };
+  resetLabel?: string;
+  autoCapitalLabel?: string;
+  autoWalletLabel?: string;
+  defaultAutoCapital?: boolean;
+  defaultAutoWallet?: boolean;
 } 

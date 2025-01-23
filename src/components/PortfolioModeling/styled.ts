@@ -10,11 +10,11 @@ const SPACING = {
 } as const;
 
 const COLUMN_WIDTHS = {
-  name: '150px',
-  percentage: '80px',
-  value: '100px',
-  target: '200px',
-  action: '40px'
+  name: '120px',
+  percentage: '70px',
+  value: '90px',
+  target: '150px',
+  action: '30px'
 } as const;
 
 export const CompactInput = styled.input`
@@ -22,7 +22,7 @@ export const CompactInput = styled.input`
   padding: 0 8px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: var(--color-surface);
+  background: transparent;
   color: var(--color-text);
   font-size: 0.95em;
   width: 100%;
@@ -45,6 +45,20 @@ export const CompactInput = styled.input`
     &::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
+    }
+  }
+
+  &:disabled {
+    background: var(--color-background);
+    border-style: dashed;
+    color: var(--color-primary);
+    
+    &:hover {
+      border-color: var(--color-border);
+    }
+    
+    &::placeholder {
+      color: var(--color-primary);
     }
   }
 `;
@@ -81,14 +95,14 @@ export const PercentageColumn = styled(Column)`
   ${CompactInput} {
     box-sizing: border-box;
     width: 100%;
-    padding-right: 20px;
+    padding-right: 25px;
     text-align: center;
   }
 
   &::after {
     content: '%';
     position: absolute;
-    right: 16px;
+    right: 14px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-text-secondary);
@@ -162,8 +176,8 @@ export const Value = styled.div`
   text-align: center;
 `;
 
-export const Balance = styled.div<{ $positive: boolean }>`
-  color: ${props => props.$positive ? 'var(--color-success)' : 'var(--color-error)'};
+export const Balance = styled.div<{ $positive: boolean; $isAsset?: boolean }>`
+  color: ${props => props.$positive || !props.children ? 'var(--color-success)' : 'var(--color-error)'};
   font-size: 0.8em;
   margin-top: 2px;
   width: 100%;
@@ -208,6 +222,20 @@ export const BaseButton = styled.button`
   }
 `;
 
+export const WalletAssets = styled.div`
+  background: var(--color-background);
+  border-top: 1px solid var(--color-border);
+
+  ${ItemContainer} {
+    background: var(--color-background);
+    padding: ${SPACING.itemPadding};
+    
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+`;
+
 export const AutoFillButton = styled(ActionButton)`
   position: absolute;
   left: calc(${COLUMN_WIDTHS.name} + ${COLUMN_WIDTHS.percentage} - 50px);
@@ -225,19 +253,11 @@ export const AutoFillButton = styled(ActionButton)`
     transform: scale(1.05);
     background: var(--color-primary);
   }
-`;
 
-export const WalletAssets = styled.div`
-  background: var(--color-background);
-  border-top: 1px solid var(--color-border);
-
-  ${ItemContainer} {
-    background: var(--color-background);
-    padding: ${SPACING.itemPadding};
-    
-    &:not(:last-child) {
-      border-bottom: 1px solid var(--color-border);
-    }
+  ${WalletAssets} & {
+    left: 14px;
+    top: -28px;
+    background: var(--color-secondary);
   }
 `;
 
@@ -302,4 +322,63 @@ export const ErrorMessage = styled.div`
   color: var(--color-error);
   font-size: 0.9em;
   text-align: center;
+`;
+
+export const ActionsPanel = styled.div`
+  display: flex;
+  gap: 8px;
+  border-radius: 12px;
+  width: fit-content;
+`;
+
+export const Toggle = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.8em;
+  color: var(--color-text-secondary);
+  opacity: 0.9;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  input {
+    appearance: none;
+    width: 40px;
+    height: 20px;
+    background: var(--color-border);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:checked {
+      background: var(--color-primary);
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      top: 2px;
+      left: 2px;
+      transition: all 0.2s;
+    }
+
+    &:checked::before {
+      left: 22px;
+    }
+  }
+
+  input:checked + span {
+    font-style: italic;
+    color: var(--color-primary);
+  }
 `;

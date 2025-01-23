@@ -2,6 +2,7 @@ import {
   ItemContainer,
   CompactInput,
   ActionButton,
+  AutoFillButton,
   ValueDisplay,
   Value,
   Balance,
@@ -17,7 +18,6 @@ import { Asset } from './types';
 interface AssetItemProps {
   asset: Asset;
   walletId: string;
-  isValid: boolean;
   totalPercentage: number;
   targetValue: number;
   labels: {
@@ -40,14 +40,16 @@ interface AssetItemProps {
 export function AssetItem({
   asset,
   walletId,
-  isValid,
+  totalPercentage,
   targetValue,
   labels,
   placeholders,
   onUpdate,
   onRemove,
+  onDistribute,
 }: AssetItemProps) {
   const balance = targetValue - asset.currentValue;
+  const assetsValid = totalPercentage === 100;
 
   return (
     <ItemContainer>
@@ -70,6 +72,17 @@ export function AssetItem({
           max="100"
           step="5"
         />
+        {!assetsValid && (
+          <AutoFillButton 
+            onClick={() => onDistribute(walletId, asset.id)}
+            title={`Ustaw na ${(100 - (totalPercentage - asset.percentage)).toFixed(1)}%`}
+          >
+            {totalPercentage > 100 
+              ? `-${(totalPercentage - 100).toFixed(1)}` 
+              : `+${(100 - totalPercentage).toFixed(1)}`
+            }
+          </AutoFillButton>
+        )}
       </PercentageColumn>
 
       <ValueColumn>
@@ -84,9 +97,12 @@ export function AssetItem({
 
       <TargetColumn>
         <ValueDisplay>
-          <Value>{isValid ? targetValue.toFixed(2) : '\u00A0-\u00A0'}</Value>
-          <Balance $positive={balance > 0}>
-            {isValid ? `${balance > 0 ? labels.buy : labels.sell}: ${Math.abs(balance).toFixed(2)}` : '\u00A0-\u00A0'}
+          <Value>{assetsValid ? targetValue.toFixed(2) : '\u00A0-\u00A0'}</Value>
+          <Balance $positive={balance > 0} $isAsset>
+            {assetsValid && balance !== 0 
+              ? `${balance > 0 ? labels.buy : labels.sell}: ${Math.abs(balance).toFixed(2)}` 
+              : '\u00A0-\u00A0'
+            }
           </Balance>
         </ValueDisplay>
       </TargetColumn>
