@@ -376,6 +376,7 @@ export const ErrorMessage = styled.div`
 
 export const ActionsPanel = styled.div`
   display: flex;
+  justify-content: center;
   gap: 8px;
   border-radius: 12px;
   width: fit-content;

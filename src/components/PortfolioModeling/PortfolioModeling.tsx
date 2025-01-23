@@ -15,7 +15,8 @@ import { WalletItem } from "./WalletItem";
 import { PortfolioSummary } from "./Summary";
 import { Wallet, PortfolioModelingProps, TabData } from "./types";
 import { Tabs } from "./Tabs";
-import { InfoTooltip } from './InfoTooltip';
+import { InfoTooltip } from "./InfoTooltip";
+import { prepareDataForExport } from "./utils";
 
 export function PortfolioModeling(props: PortfolioModelingProps) {
   const {
@@ -26,11 +27,12 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     addAssetLabel = "+ Add asset",
     walletErrorMessages = {
       exceedsTotal: "Portfolio total exceeds 100% by {value}%",
-      belowTotal: "Portfolio total is below 100% by {value}%"
+      belowTotal: "Portfolio total is below 100% by {value}%",
     },
     assetErrorMessages = {
-      exceedsTotal: "Assets total in wallet \"{wallet}\" exceeds 100% by {value}%",
-      belowTotal: "Assets total in wallet \"{wallet}\" is below 100% by {value}%"
+      exceedsTotal:
+        'Assets total in wallet "{wallet}" exceeds 100% by {value}%',
+      belowTotal: 'Assets total in wallet "{wallet}" is below 100% by {value}%',
     },
     defaultCapital = 0,
     defaultWallets = [],
@@ -39,37 +41,40 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     autoTooltip = "### Tryby automatyczne\n\n**Automatyczny kapitał**\n- Sumuje wartości wszystkich portfeli jako kapitał całkowity\n- Aktualizuje się automatycznie przy zmianie wartości portfeli\n\n**Automatyczny portfel**\n- Sumuje wartości walorów w portfelu jako wartość portfela\n- Aktualizuje się automatycznie przy zmianie wartości walorów",
     defaultAutoCapital = false,
     defaultAutoWallet = false,
-    resetLabel = "Resetuj",
     defaultWalletName = "Wallet {number}",
     defaultAssetName = "Walor {number}",
     newPortfolioName = "Portfolio {number}",
     autoFillButtonTitle = "Set to {value}%",
-    defaultTabs = [{
-      name: 'Portfolio 1',
-      wallets: defaultWallets || []
-    }],
+    defaultTabs = [
+      {
+        name: "Portfolio 1",
+        wallets: defaultWallets || [],
+      },
+    ],
+    exportLabel = "Eksportuj",
+    importLabel = "Importuj",
   } = props;
 
   const [tabs, setTabs] = useState<Array<{ id: string; name: string }>>(
     defaultTabs.map((tab, index) => ({
       id: crypto.randomUUID(),
-      name: tab.name || newPortfolioName.replace('{number}', String(index + 1))
+      name: tab.name || newPortfolioName.replace("{number}", String(index + 1)),
     }))
   );
 
   const [activeTab, setActiveTab] = useState<string>(tabs[0].id);
   const [tabsData, setTabsData] = useState<Record<string, TabData>>(() => {
     const initialData: Record<string, TabData> = {};
-    
+
     defaultTabs.forEach((tab, index) => {
       const tabId = tabs[index].id;
       initialData[tabId] = {
-        wallets: tab.wallets.map(wallet => ({
+        wallets: tab.wallets.map((wallet) => ({
           id: crypto.randomUUID(),
           name: wallet.name,
           percentage: wallet.percentage,
           currentValue: 0,
-          assets: (wallet.assets || []).map(asset => ({
+          assets: (wallet.assets || []).map((asset) => ({
             id: crypto.randomUUID(),
             name: asset.name,
             percentage: asset.percentage,
@@ -93,8 +98,8 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
       ...tabsData,
       [activeTab]: {
         ...tabsData[activeTab],
-        ...data
-      }
+        ...data,
+      },
     });
   };
 
@@ -115,7 +120,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         updateTabData({ totalCapital: sum });
       }
     }
-  }, [autoCapital, wallets.map(w => w.currentValue).join()]);
+  }, [autoCapital, wallets.map((w) => w.currentValue).join()]);
 
   const setAutoCapital = (value: boolean) => {
     if (value) {
@@ -125,16 +130,16 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         [activeTab]: {
           ...tabsData[activeTab],
           autoCapital: value,
-          totalCapital: sum > 0 ? sum : totalCapital
-        }
+          totalCapital: sum > 0 ? sum : totalCapital,
+        },
       });
     } else {
       setTabsData({
         ...tabsData,
         [activeTab]: {
           ...tabsData[activeTab],
-          autoCapital: value
-        }
+          autoCapital: value,
+        },
       });
     }
   };
@@ -145,14 +150,17 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
 
   useEffect(() => {
     if (autoWallet) {
-      const updatedWallets = wallets.map(wallet => {
+      const updatedWallets = wallets.map((wallet) => {
         // Aktualizuj tylko portfele z assetami
         if (wallet.assets.length > 0) {
-          const assetsSum = wallet.assets.reduce((sum, asset) => sum + asset.currentValue, 0);
+          const assetsSum = wallet.assets.reduce(
+            (sum, asset) => sum + asset.currentValue,
+            0
+          );
           if (wallet.currentValue !== assetsSum) {
             return {
               ...wallet,
-              currentValue: assetsSum
+              currentValue: assetsSum,
             };
           }
         }
@@ -162,22 +170,27 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
       const hasChanges = updatedWallets.some(
         (wallet, i) => wallet.currentValue !== wallets[i].currentValue
       );
-      
+
       if (hasChanges) {
         setWallets(updatedWallets);
       }
     }
-  }, [autoWallet, JSON.stringify(wallets.map(w => ({
-    percentage: w.percentage,
-    assetValues: w.assets.map(a => a.currentValue)
-  })))]);
+  }, [
+    autoWallet,
+    JSON.stringify(
+      wallets.map((w) => ({
+        percentage: w.percentage,
+        assetValues: w.assets.map((a) => a.currentValue),
+      }))
+    ),
+  ]);
 
   const addWallet = () => {
     setWallets([
       ...wallets,
       {
         id: crypto.randomUUID(),
-        name: defaultWalletName.replace('{number}', String(wallets.length + 1)),
+        name: defaultWalletName.replace("{number}", String(wallets.length + 1)),
         percentage: 0,
         currentValue: 0,
         assets: [],
@@ -195,7 +208,10 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
                 ...wallet.assets,
                 {
                   id: crypto.randomUUID(),
-                  name: defaultAssetName.replace('{number}', String(wallet.assets.length + 1)),
+                  name: defaultAssetName.replace(
+                    "{number}",
+                    String(wallet.assets.length + 1)
+                  ),
                   percentage: 0,
                   currentValue: 0,
                 },
@@ -293,29 +309,37 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   };
 
   const getPortfolioError = () => {
-    if (wallets.length === 0 || !totalCapital) return '';
-    if (totalPercentage === 100) return '';
-    
+    if (wallets.length === 0 || !totalCapital) return "";
+    if (totalPercentage === 100) return "";
+
     const diff = Math.abs(totalPercentage - 100).toFixed(1);
     return totalPercentage > 100
-      ? walletErrorMessages.exceedsTotal.replace('{value}', diff)
-      : walletErrorMessages.belowTotal.replace('{value}', diff);
+      ? walletErrorMessages.exceedsTotal.replace("{value}", diff)
+      : walletErrorMessages.belowTotal.replace("{value}", diff);
   };
 
   const getAssetsError = () => {
     const errors: string[] = [];
-    
+
     for (const wallet of wallets) {
-      const assetsTotal = wallet.assets.reduce((sum, a) => sum + a.percentage, 0);
+      const assetsTotal = wallet.assets.reduce(
+        (sum, a) => sum + a.percentage,
+        0
+      );
       if (assetsTotal !== 100 && wallet.assets.length > 0) {
         const diff = Math.abs(assetsTotal - 100).toFixed(1);
-        const error = assetsTotal > 100
-          ? assetErrorMessages.exceedsTotal.replace('{wallet}', wallet.name).replace('{value}', diff)
-          : assetErrorMessages.belowTotal.replace('{wallet}', wallet.name).replace('{value}', diff);
+        const error =
+          assetsTotal > 100
+            ? assetErrorMessages.exceedsTotal
+                .replace("{wallet}", wallet.name)
+                .replace("{value}", diff)
+            : assetErrorMessages.belowTotal
+                .replace("{wallet}", wallet.name)
+                .replace("{value}", diff);
         errors.push(error);
       }
     }
-    
+
     return errors;
   };
 
@@ -325,33 +349,10 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   );
   const isValid = totalPercentage === 100;
 
-  const resetToDefault = () => {
-    // Najpierw resetujemy wartości
-    setWallets(
-      (defaultWallets || []).map((wallet) => ({
-        id: crypto.randomUUID(),
-        name: wallet.name,
-        percentage: wallet.percentage,
-        currentValue: 0,
-        assets: (wallet.assets || []).map(asset => ({
-          id: crypto.randomUUID(),
-          name: asset.name,
-          percentage: asset.percentage,
-          currentValue: asset.currentValue || 0,
-        })),
-      }))
-    );
-    setTotalCapital(defaultCapital || null);
-
-    // Potem ustawiamy flagi
-    setAutoCapital(defaultAutoCapital);
-    setAutoWallet(defaultAutoWallet);
-  };
-
   const addTab = () => {
     const newTab = {
       id: crypto.randomUUID(),
-      name: newPortfolioName.replace('{number}', String(tabs.length + 1))
+      name: newPortfolioName.replace("{number}", String(tabs.length + 1)),
     };
     setTabs([...tabs, newTab]);
     setTabsData({
@@ -361,30 +362,90 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         totalCapital: defaultCapital || null,
         autoCapital: defaultAutoCapital,
         autoWallet: defaultAutoWallet,
-      }
+      },
     });
     setActiveTab(newTab.id);
   };
 
   const removeTab = (id: string) => {
     if (tabs.length === 1) return;
-    
-    const newTabs = tabs.filter(tab => tab.id !== id);
+
+    const newTabs = tabs.filter((tab) => tab.id !== id);
     const newTabsData = { ...tabsData };
     delete newTabsData[id];
-    
+
     setTabs(newTabs);
     setTabsData(newTabsData);
-    
+
     if (activeTab === id) {
       setActiveTab(newTabs[0].id);
     }
   };
 
   const renameTab = (id: string, name: string) => {
-    setTabs(tabs.map(tab => 
-      tab.id === id ? { ...tab, name } : tab
-    ));
+    setTabs(tabs.map((tab) => (tab.id === id ? { ...tab, name } : tab)));
+  };
+
+  const handleExport = () => {
+    const data = prepareDataForExport(tabsData[activeTab]);
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${
+      tabs.find((t) => t.id === activeTab)?.name || "portfolio"
+    }.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      try {
+        if (!e.target?.result) return;
+        const data = JSON.parse(e.target.result as string);
+        const newTab = {
+          id: crypto.randomUUID(),
+          name: file.name.replace(".json", ""),
+        };
+
+        setTabs([...tabs, newTab]);
+        setTabsData({
+          ...tabsData,
+          [newTab.id]: {
+            wallets: data.wallets.map((wallet: any) => ({
+              id: crypto.randomUUID(),
+              name: wallet.name,
+              percentage: wallet.percentage,
+              currentValue: wallet.currentValue || 0,
+              assets: (wallet.assets || []).map((asset: any) => ({
+                id: crypto.randomUUID(),
+                name: asset.name,
+                percentage: asset.percentage,
+                currentValue: asset.currentValue || 0,
+              })),
+            })),
+            totalCapital: data.totalCapital || null,
+            autoCapital: data.autoCapital || false,
+            autoWallet: data.autoWallet || false,
+          },
+        });
+        setActiveTab(newTab.id);
+      } catch (error) {
+        console.error("Error importing file:", error);
+        // You might want to show an error message to the user here
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = ""; // Reset input
   };
 
   return (
@@ -399,11 +460,20 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
       />
       <LeftPanel>
         <ActionsPanel>
-          <BaseButton onClick={resetToDefault}>
-            {resetLabel}
-          </BaseButton>
-          <BaseButton onClick={addWallet}>
+          <BaseButton style={{ width: "100%" }} onClick={addWallet}>
             {addWalletLabel}
+          </BaseButton>
+          <BaseButton onClick={handleExport}>
+            {exportLabel}
+          </BaseButton>
+          <BaseButton>
+            {importLabel}
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImport}
+              style={{ display: "none" }}
+            />
           </BaseButton>
         </ActionsPanel>
 
@@ -415,7 +485,13 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
               onChange={setTotalCapital}
               disabled={autoCapital}
             />
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <div
+              style={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               <Toggle>
                 <input
                   type="checkbox"
@@ -438,42 +514,50 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         </TotalCapitalSection>
 
         <PortfolioSummary
-          errorMessage={[getPortfolioError(), ...getAssetsError()].filter(Boolean)}
+          errorMessage={[getPortfolioError(), ...getAssetsError()].filter(
+            Boolean
+          )}
         />
       </LeftPanel>
 
       <RightPanel>
-          {wallets.map((wallet) => (
-            <WalletItem
-              key={wallet.id}
-              wallet={wallet}
-              isValid={isValid}
-              totalPercentage={totalPercentage}
-              targetValue={((totalCapital || 0) * wallet.percentage) / 100}
-              labels={{
-                buy: buyLabel,
-                sell: sellLabel,
-                addAsset: addAssetLabel,
-              }}
-              placeholders={{
-                name: defaultWalletName.replace('{number}', String(wallets.indexOf(wallet) + 1)),
-                percentage: defaultAssetName.replace('{number}', String(wallet.assets.length + 1)),
-              }}
-              errorMessages={{
-                wallet: walletErrorMessages,
-                asset: assetErrorMessages,
-              }}
-              onUpdate={updateWallet}
-              onRemove={removeWallet}
-              onDistribute={distributeRemaining}
-              onAddAsset={addWalor}
-              onUpdateAsset={updateAsset}
-              onRemoveAsset={removeAsset}
-              onDistributeAsset={distributeAsset}
-              autoWallet={autoWallet}
-              autoFillButtonTitle={autoFillButtonTitle}
-            />
-          ))}
+        {wallets.map((wallet) => (
+          <WalletItem
+            key={wallet.id}
+            wallet={wallet}
+            isValid={isValid}
+            totalPercentage={totalPercentage}
+            targetValue={((totalCapital || 0) * wallet.percentage) / 100}
+            labels={{
+              buy: buyLabel,
+              sell: sellLabel,
+              addAsset: addAssetLabel,
+            }}
+            placeholders={{
+              name: defaultWalletName.replace(
+                "{number}",
+                String(wallets.indexOf(wallet) + 1)
+              ),
+              percentage: defaultAssetName.replace(
+                "{number}",
+                String(wallet.assets.length + 1)
+              ),
+            }}
+            errorMessages={{
+              wallet: walletErrorMessages,
+              asset: assetErrorMessages,
+            }}
+            onUpdate={updateWallet}
+            onRemove={removeWallet}
+            onDistribute={distributeRemaining}
+            onAddAsset={addWalor}
+            onUpdateAsset={updateAsset}
+            onRemoveAsset={removeAsset}
+            onDistributeAsset={distributeAsset}
+            autoWallet={autoWallet}
+            autoFillButtonTitle={autoFillButtonTitle}
+          />
+        ))}
       </RightPanel>
     </Container>
   );

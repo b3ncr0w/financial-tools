@@ -68,6 +68,10 @@ export interface PortfolioModelingProps {
       }>;
     }>;
   }>;
+
+  // Labels
+  exportLabel?: string;
+  importLabel?: string;
 }
 
 export interface TabData {

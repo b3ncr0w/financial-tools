@@ -10,13 +10,13 @@ content:
   - type: component
     name: portfolio-modeling
     props:
-      # Główne etykiety
       totalCapitalLabel: Kapitał całkowity
       addWalletLabel: + Dodaj portfel
       buyLabel: Kup
       sellLabel: Sprzedaj
       addAssetLabel: + Dodaj walor
-      resetLabel: Resetuj
+      exportLabel: Eksportuj
+      importLabel: Importuj
       autoCapitalLabel: Automatyczny kapitał
       autoWalletLabel: Automatyczny portfel
       defaultAssetName: "Walor {number}"
@@ -24,7 +24,6 @@ content:
       newPortfolioName: "Portfolio {number}"
       autoFillButtonTitle: "Ustaw na {value}%"
 
-      # Komunikaty błędów
       walletErrorMessages:
         exceedsTotal: Suma procentów portfeli przekracza 100% o {value}%
         belowTotal: Do 100% sumy portfeli brakuje {value}%
@@ -32,7 +31,6 @@ content:
         exceedsTotal: Suma procentów walorów w portfelu "{wallet}" przekracza 100% o {value}%
         belowTotal: Do 100% sumy walorów w portfelu "{wallet}" brakuje {value}%
 
-      # Wartości domyślne
       defaultAutoCapital: false
       defaultAutoWallet: true
       defaultCapital: 10000
@@ -69,7 +67,6 @@ content:
                 - name: USDT
                   percentage: 100
 
-      # Tooltips
       autoTooltip: |
         ### Tryby automatyczne
 
