@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "node scripts/copy-cms.js && vite",
+    "build": "node scripts/copy-cms.js && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -20,6 +20,7 @@
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@rollup/plugin-yaml": "^4.1.2",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.10.9",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",

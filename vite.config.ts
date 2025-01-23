@@ -21,11 +21,11 @@ export default defineConfig({
       },
     },
   },
+  publicDir: 'public',
   assetsInclude: ['**/*.yaml', '**/*.yml'],
   resolve: {
     alias: {
       '/src': path.resolve(__dirname, 'src')
     }
   },
-  publicDir: false,
 })

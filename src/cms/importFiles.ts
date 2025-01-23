@@ -1,61 +1,120 @@
+import { config } from "./config";
+import { CMS, Page } from "./types";
+import yaml from 'js-yaml';
+
 interface CMSData {
-  data: any;
-  slugMappings: Record<string, string>;
-  pageSlugMappings: Record<string, string>;
+  data: Record<string, CMS>;
+  slugMappings: Record<string, Record<string, string>>;
+  pageSlugMappings: Record<string, Record<string, string>>;
 }
 
-interface YAMLModule {
-  default: {
-    id: string;
-    slug?: string;
-    [key: string]: any;
-  };
+interface BaseYAMLModule {
+  id: string;
+  slug: string;
+  title: string;
 }
 
-async function importFiles(): Promise<CMSData> {
-  const modules = import.meta.glob<YAMLModule>([
-    './pl/**/*.yaml',
-    './en/**/*.yaml'
-  ]);
+interface PageYAMLModule extends BaseYAMLModule {
+  order?: number;
+  menuTitle?: string;
+  type: 'page';
+}
 
-  const data: Record<string, any> = {};
-  const slugMappings: Record<string, string> = {};
-  const pageSlugMappings: Record<string, string> = {};
+interface ArticleYAMLModule extends BaseYAMLModule {
+  date: string;
+  type: 'article';
+}
 
-  for (const path in modules) {
-    const module = await modules[path]();
-    const content = module.default;
-    
-    // Extract language and type from path
-    const [, lang, type] = path.split('/');
-    
-    if (!data[lang]) {
-      data[lang] = {};
-    }
-    if (!data[lang][type]) {
-      data[lang][type] = [];
-    }
+interface MetaYAMLModule {
+  title: string;
+  type: 'meta';
+}
 
-    data[lang][type].push(content);
+export const importFiles = async (): Promise<CMSData> => {
+  try {
+    const modules = import.meta.glob<string>([
+      '/public/cms/*/pages/*.yaml',
+    ], { 
+      eager: true,
+      as: 'raw'
+    });
 
-    if (content.slug) {
-      if (type === 'pages') {
-        pageSlugMappings[content.slug] = content.id;
-      } else {
-        slugMappings[content.slug] = content.id;
+    if (Object.keys(modules).length === 0) {
+      const alternativeModules = import.meta.glob<string>([
+        '../public/cms/*/pages/*.yaml',
+        './public/cms/*/pages/*.yaml'
+      ], { 
+        eager: true,
+        as: 'raw'
+      });
+      if (Object.keys(alternativeModules).length > 0) {
+        Object.assign(modules, alternativeModules);
       }
     }
-  }
 
-  return { data, slugMappings, pageSlugMappings };
+    const data: Record<string, CMS> = {};
+    const slugMappings: Record<string, Record<string, string>> = {};
+    const pageSlugMappings: Record<string, Record<string, string>> = {};
+
+    Object.keys(config.languages).forEach(lang => {
+      data[lang] = {
+        navigation: [],
+        meta: { title: '' },
+        articles: {},
+        pages: {}
+      };
+    });
+
+    for (const path in modules) {
+      const yamlContent = modules[path];
+      const content = yaml.load(yamlContent) as PageYAMLModule | ArticleYAMLModule | MetaYAMLModule;
+      
+      const match = path.match(/\/cms\/(\w+)\/(\w+)\/(.*?)\.yaml$/);
+      if (!match) continue;
+      
+      const [, lang, type] = match;
+
+      if (type === 'pages' && content.type === 'page') {
+        const pageId = content.id;
+        const pagePath = content.slug.startsWith('/') ? content.slug : `/${content.slug}`;
+        
+        if (!pageSlugMappings[pageId]) {
+          pageSlugMappings[pageId] = {};
+        }
+        pageSlugMappings[pageId][lang] = pagePath;
+        
+        data[lang].pages[pagePath] = {
+          ...content,
+          slugs: pageSlugMappings[pageId]
+        };
+      }
+    }
+
+    Object.keys(config.languages).forEach(lang => {
+      const pages = Object.values(data[lang].pages) as Array<Page>;
+      data[lang].navigation = pages
+        .sort((a, b) => (a.order || 999) - (b.order || 999))
+        .map(page => ({
+          text: page.menuTitle || page.title,
+          url: page.slug.startsWith('/') ? page.slug : `/${page.slug}`
+        }));
+    });
+
+    return { data, slugMappings, pageSlugMappings };
+  } catch (error) {
+    return { 
+      data: {} as Record<string, CMS>, 
+      slugMappings: {}, 
+      pageSlugMappings: {} 
+    };
+  }
 }
 
 let cmsData: CMSData | null = null;
 
 export async function initializeCMS() {
   if (!cmsData) {
-    const { data: getData, slugMappings: articleSlugs, pageSlugMappings } = await importFiles();
-    cmsData = { data: getData, slugMappings: articleSlugs, pageSlugMappings };
+    cmsData = await importFiles();
   }
   return cmsData;
 }

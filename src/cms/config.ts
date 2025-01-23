@@ -15,4 +15,6 @@ export const config = {
     language: "en" as const,
     theme: "dark" as const
   }
-} as const; 
+} as const;
+
+export const CMS_PUBLIC_PATH = '/public/cms'; 

@@ -2,14 +2,13 @@ import { Navigation } from './components/Navigation';
 import { LanguageSwitch } from './components/LanguageSwitch';
 import { ThemeSwitch } from './components/ThemeSwitch';
 import { useApp } from './context/AppContext'
-import { getData } from './cms/getData';
+import { getData, initializeCMSData } from './cms/getData';
 import styled from 'styled-components';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { NavigationLink, Page as PageType, Article } from './cms/types';
 import { useEffect, useState } from 'react';
 import { ArticlePage } from './components/ArticlePage';
 import { DynamicPage } from './components/DynamicPage';
-import { initializeCMSData } from './cms/getData';
 
 interface PageData {
   navigation: NavigationLink[];
@@ -27,24 +26,49 @@ function App() {
   const [cmsData, setCmsData] = useState<PageData | null>(null);
 
   useEffect(() => {
-    initializeCMSData()
-      .then(() => {
-        setCmsData(getData()[language] as PageData);
-        setIsLoading(false);
-      })
-      .catch(err => {
+    let mounted = true;
+
+    const initCMS = async () => {
+      try {
+        setIsLoading(true);
+        const initialized = await initializeCMSData();
+        
+        if (!mounted) return;
+        
+        if (initialized) {
+          const data = getData();
+          setCmsData(data[language] as PageData);
+        } else {
+          throw new Error('Failed to initialize CMS data');
+        }
+      } catch (err) {
         console.error('Failed to initialize CMS:', err);
-        setError('Failed to load content');
-      });
+        if (mounted) {
+          setError('Failed to load content');
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initCMS();
+
+    return () => {
+      mounted = false;
+    };
   }, [language]);
+
+  useEffect(() => {
+    if (cmsData?.meta?.title) {
+      document.title = cmsData.meta.title;
+    }
+  }, [cmsData]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
   if (!cmsData) return null;
-
-  useEffect(() => {
-    document.title = cmsData.meta.title;
-  }, [cmsData]);
 
   return (
     <BrowserRouter>
