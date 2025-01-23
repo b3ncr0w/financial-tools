@@ -14,8 +14,8 @@ interface YAMLModule {
 
 async function importFiles(): Promise<CMSData> {
   const modules = import.meta.glob<YAMLModule>([
-    './pl/**/*.yaml',
-    './en/**/*.yaml'
+    '/src/cms/pl/**/*.yaml',
+    '/src/cms/en/**/*.yaml'
   ]);
 
   const data: Record<string, any> = {};
@@ -27,7 +27,7 @@ async function importFiles(): Promise<CMSData> {
     const content = module.default;
     
     // Extract language and type from path
-    const [, lang, type] = path.split('/');
+    const [, , , lang, type] = path.split('/');
     
     if (!data[lang]) {
       data[lang] = {};

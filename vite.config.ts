@@ -8,15 +8,23 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), yaml()],
+  plugins: [
+    react(),
+    yaml({
+      include: ['**/*.yaml', '**/*.yml']
+    })
+  ],
   build: {
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
       },
     },
-    copyPublicDir: true,
   },
-  publicDir: 'src/cms',
-  assetsInclude: ['**/*.yaml', '**/*.yml'],
+  resolve: {
+    alias: {
+      '/src': path.resolve(__dirname, 'src')
+    }
+  },
+  publicDir: false,
 })

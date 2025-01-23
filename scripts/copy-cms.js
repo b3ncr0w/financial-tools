@@ -7,6 +7,7 @@ const srcDir = join(__dirname, '../src/cms');
 const distDir = join(__dirname, '../dist/assets');
 
 // Create the dist directories
+mkdirSync(distDir, { recursive: true });
 mkdirSync(join(distDir, 'en'), { recursive: true });
 mkdirSync(join(distDir, 'pl'), { recursive: true });
 mkdirSync(join(distDir, 'en/pages'), { recursive: true });
