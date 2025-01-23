@@ -36,36 +36,38 @@ content:
       defaultAutoCapital: false
       defaultAutoWallet: true
       defaultCapital: 10000
-      defaultWallets:
-        - name: Bezpieczny
-          percentage: 60
-          assets:
-            - name: BTC
-              percentage: 25
-            - name: ETH
-              percentage: 70
-            - name: TAO
-              percentage: 3
-            - name: FET
-              percentage: 2
-        - name: Ryzykowny
-          percentage: 30
-          assets:
-            - name: ETH
+      defaultTabs:
+        - name: Krypto
+          wallets:
+            - name: Bezpieczny
               percentage: 60
-            - name: SUI
+              assets:
+                - name: BTC
+                  percentage: 25
+                - name: ETH
+                  percentage: 70
+                - name: TAO
+                  percentage: 3
+                - name: FET
+                  percentage: 2
+            - name: Ryzykowny
+              percentage: 30
+              assets:
+                - name: ETH
+                  percentage: 60
+                - name: SUI
+                  percentage: 10
+                - name: VIRTUAL
+                  percentage: 10
+                - name: BONK
+                  percentage: 10
+                - name: ONDO
+                  percentage: 10
+            - name: Trading
               percentage: 10
-            - name: VIRTUAL
-              percentage: 10
-            - name: BONK
-              percentage: 10
-            - name: ONDO
-              percentage: 10
-        - name: Trading
-          percentage: 10
-          assets:
-            - name: USDT
-              percentage: 100
+              assets:
+                - name: USDT
+                  percentage: 100
 
       # Tooltips
       autoTooltip: |

@@ -44,30 +44,45 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     defaultAssetName = "Walor {number}",
     newPortfolioName = "Portfolio {number}",
     autoFillButtonTitle = "Set to {value}%",
+    defaultTabs = [{
+      name: 'Portfolio 1',
+      wallets: defaultWallets || []
+    }],
   } = props;
 
-  const [tabs, setTabs] = useState<Array<{ id: string; name: string }>>([
-    { id: crypto.randomUUID(), name: 'Portfolio 1' }
-  ]);
+  const [tabs, setTabs] = useState<Array<{ id: string; name: string }>>(
+    defaultTabs.map((tab, index) => ({
+      id: crypto.randomUUID(),
+      name: tab.name || newPortfolioName.replace('{number}', String(index + 1))
+    }))
+  );
+
   const [activeTab, setActiveTab] = useState<string>(tabs[0].id);
-  const [tabsData, setTabsData] = useState<Record<string, TabData>>({
-    [tabs[0].id]: {
-      wallets: defaultWallets.map(wallet => ({
-        id: crypto.randomUUID(),
-        name: wallet.name,
-        percentage: wallet.percentage,
-        currentValue: 0,
-        assets: (wallet.assets || []).map(asset => ({
+  const [tabsData, setTabsData] = useState<Record<string, TabData>>(() => {
+    const initialData: Record<string, TabData> = {};
+    
+    defaultTabs.forEach((tab, index) => {
+      const tabId = tabs[index].id;
+      initialData[tabId] = {
+        wallets: tab.wallets.map(wallet => ({
           id: crypto.randomUUID(),
-          name: asset.name,
-          percentage: asset.percentage,
-          currentValue: asset.currentValue || 0,
+          name: wallet.name,
+          percentage: wallet.percentage,
+          currentValue: 0,
+          assets: (wallet.assets || []).map(asset => ({
+            id: crypto.randomUUID(),
+            name: asset.name,
+            percentage: asset.percentage,
+            currentValue: asset.currentValue || 0,
+          })),
         })),
-      })),
-      totalCapital: defaultCapital || null,
-      autoCapital: defaultAutoCapital,
-      autoWallet: defaultAutoWallet,
-    }
+        totalCapital: defaultCapital || null,
+        autoCapital: defaultAutoCapital,
+        autoWallet: defaultAutoWallet,
+      };
+    });
+
+    return initialData;
   });
 
   const activeData = tabsData[activeTab];

@@ -54,6 +54,20 @@ export interface PortfolioModelingProps {
 
   // Tooltips
   autoTooltip?: string;
+
+  // Update defaultWallets to be an array of tab configurations
+  defaultTabs?: Array<{
+    name: string;
+    wallets: Array<{
+      name: string;
+      percentage: number;
+      assets?: Array<{
+        name: string;
+        percentage: number;
+        currentValue?: number;
+      }>;
+    }>;
+  }>;
 }
 
 export interface TabData {
