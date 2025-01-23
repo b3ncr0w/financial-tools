@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { ChangeEvent } from 'react';
 
 export type InputChangeEvent = ChangeEvent<HTMLInputElement>;
@@ -18,7 +18,7 @@ const COLUMN_WIDTHS = {
 } as const;
 
 const BREAKPOINTS = {
-  mobile: '900px',
+  mobile: '1200px',
 } as const;
 
 export const Z_INDEX = {
@@ -28,6 +28,38 @@ export const Z_INDEX = {
   overlay: 9999,
   tooltipContainer: 9998
 } as const;
+
+// Define animations
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const slideInFromTop = keyframes`
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
+const slideInFromLeft = keyframes`
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`;
 
 export const CompactInput = styled.input`
   height: 42px;
@@ -149,13 +181,15 @@ export const ActionColumn = styled(Column)`
 export const Container = styled.div`
   box-sizing: border-box;
   display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 100vw;
   margin: 0 auto;
   flex-wrap: wrap;
-  justify-content: center;
+  align-items: center;
   position: relative;
   z-index: ${Z_INDEX.base};
+  animation: ${fadeIn} 0.3s ease-out;
 `;
 
 export const TopPanel = styled.div`
@@ -167,6 +201,7 @@ export const TopPanel = styled.div`
   max-width: 1000px;
   padding: ${SPACING.padding};
   align-items: start;
+  animation: ${slideInFromTop} 0.4s ease-out;
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
     grid-template-columns: 1fr;
@@ -201,7 +236,7 @@ export const BaseButton = styled.button`
   font-size: 0.9em;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s;
   width: 100%;
   display: flex;
   align-items: center;
@@ -211,10 +246,16 @@ export const BaseButton = styled.button`
   &:hover {
     border-color: var(--color-primary);
     color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    box-shadow: none;
   }
 `;
 
 export const BottomPanel = styled.div`
+  box-sizing: border-box;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fill, 480px);
@@ -224,6 +265,7 @@ export const BottomPanel = styled.div`
   padding: ${SPACING.padding};
   position: relative;
   z-index: ${Z_INDEX.base};
+  max-width: 1200px;
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
     display: flex;
@@ -245,6 +287,12 @@ export const WalletPanel = styled.div`
   height: fit-content;
   position: relative;
   z-index: ${Z_INDEX.base};
+  animation: ${slideInFromLeft} 0.4s ease-out;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
     width: 100%;
@@ -295,11 +343,13 @@ export const ItemContainer = styled.div`
   align-items: center;
   height: 48px;
   position: relative;
+  animation: ${fadeIn} 0.3s ease-out;
 `;
 
 export const WalletAssets = styled.div`
   background: var(--color-background);
   border-top: 1px solid var(--color-border);
+  animation: ${fadeIn} 0.4s ease-out;
 
   ${ItemContainer} {
     background: var(--color-background);
@@ -322,7 +372,7 @@ export const AutoFillButton = styled(BaseButton)`
 
   &:hover {
     color: var(--color-text-primary);
-    transform: scale(1.05);
+    opacity: 0.9;
   }
 
   ${WalletAssets} & {
