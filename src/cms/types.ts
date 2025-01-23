@@ -50,7 +50,7 @@ export interface Article {
   date: string;
   slug: string;
   content?: ContentBlock[];
-  slugs?: Record<string, string>;
+  slugs: Record<string, string>;
 }
 
 export interface Page {
@@ -61,7 +61,7 @@ export interface Page {
   description?: string;
   slug: string;
   content?: ContentBlock[];
-  slugs?: Record<string, string>;
+  slugs: Record<string, string>;
   articles?: Article[];
   showArticles?: boolean;
 }

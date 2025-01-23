@@ -7,36 +7,39 @@ import { config } from "../cms/config";
 import { useEffect } from "react";
 
 export function ArticlePage() {
-  const { slug } = useParams();
   const { language } = useApp();
+  const { slug } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (slug) {
-      // Find the corresponding article in the current language
-      const currentArticle = getData[language].articles[slug];
-      
-      if (!currentArticle) {
-        // If article not found in current language, search in other languages
-        for (const lang of Object.keys(config.languages)) {
-          const articles = Object.values(getData[lang].articles);
-          const matchingArticle = articles.find(article => 
-            article.slug === slug || 
-            Object.values(article.slugs || {}).includes(slug)
-          );
+    if (!slug) return;
 
-          if (matchingArticle?.slugs?.[language]) {
-            // Found a matching article, redirect to its slug in current language
-            navigate(`/articles/${matchingArticle.slugs[language]}`, { replace: true });
-            break;
-          }
+    const currentArticle = getData()[language].articles[slug];
+    
+    if (!currentArticle) {
+      // Try to find article in other languages
+      const availableLanguages = Object.keys(config.languages);
+      for (const lang of availableLanguages) {
+        const articles = Object.values(getData()[lang].articles);
+        const matchingArticle = articles.find(article => 
+          article.slug === slug ||
+          Object.values(article.slugs || {}).includes(slug)
+        );
+
+        if (matchingArticle?.slugs?.[language]) {
+          // Redirect to the correct slug for current language
+          navigate(`/articles/${matchingArticle.slugs[language]}`, { replace: true });
+          return;
         }
       }
+
+      navigate('/404');
     }
   }, [slug, language]);
 
-  const article = getData[language].articles[slug as string];
+  if (!slug) return null;
 
+  const article = getData()[language].articles[slug as string];
   if (!article) return null;
 
   const formattedDate = new Intl.DateTimeFormat(config.languages[language].locale, {

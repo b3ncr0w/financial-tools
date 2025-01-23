@@ -6,9 +6,10 @@ import { getData } from './cms/getData';
 import styled from 'styled-components';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { NavigationLink, Page as PageType, Article } from './cms/types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ArticlePage } from './components/ArticlePage';
 import { DynamicPage } from './components/DynamicPage';
+import { initializeCMSData } from './cms/getData';
 
 interface PageData {
   navigation: NavigationLink[];
@@ -21,17 +22,35 @@ interface PageData {
 
 function App() {
   const { language } = useApp();
-  const data = getData[language] as PageData;
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [cmsData, setCmsData] = useState<PageData | null>(null);
 
   useEffect(() => {
-    document.title = data.meta.title;
+    initializeCMSData()
+      .then(() => {
+        setCmsData(getData()[language] as PageData);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to initialize CMS:', err);
+        setError('Failed to load content');
+      });
   }, [language]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!cmsData) return null;
+
+  useEffect(() => {
+    document.title = cmsData.meta.title;
+  }, [cmsData]);
 
   return (
     <BrowserRouter>
       <Layout>
         <Header>
-          <Navigation data={data.navigation} />
+          <Navigation data={cmsData.navigation} />
           <Controls>
             <LanguageSwitch />
             <ThemeSwitch />

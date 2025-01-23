@@ -136,4 +136,35 @@ async function importFiles() {
   return { data, slugMappings, pageSlugMappings };
 }
 
-export const { data: getData, slugMappings: articleSlugs, pageSlugMappings } = await importFiles();
+let cmsData: {
+  data: Record<string, CMS>;
+  slugMappings: Record<string, Record<string, string>>;
+  pageSlugMappings: Record<string, Record<string, string>>;
+} | null = null;
+
+export async function initializeCMSData() {
+  if (!cmsData) {
+    cmsData = await importFiles();
+  }
+  return cmsData;
+}
+
+export function getCMSData() {
+  if (!cmsData) {
+    throw new Error('CMS data not initialized. Call initializeCMSData first.');
+  }
+  return cmsData;
+}
+
+// Export individual getters
+export function getData() {
+  return getCMSData().data;
+}
+
+export function getArticleSlugs() {
+  return getCMSData().slugMappings;
+}
+
+export function getPageSlugs() {
+  return getCMSData().pageSlugMappings;
+}

@@ -6,42 +6,38 @@ import { useEffect } from 'react';
 import { config } from '../cms/config';
 
 export function DynamicPage() {
-  const { pathname } = useLocation();
   const { language } = useApp();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Find the page in current language
-    const currentPage = getData[language].pages[pathname];
+    const currentPage = getData()[language].pages[pathname];
     
     if (!currentPage) {
-      // If page not found in current language, search in other languages
-      for (const lang of Object.keys(config.languages)) {
-        const pages = Object.values(getData[lang].pages);
+      // Try to find page in other languages
+      const availableLanguages = Object.keys(config.languages);
+      for (const lang of availableLanguages) {
+        const pages = Object.values(getData()[lang].pages);
         const matchingPage = pages.find(page => 
-          page.slug === pathname || 
+          page.slug === pathname ||
           Object.values(page.slugs || {}).includes(pathname)
         );
 
         if (matchingPage?.slugs?.[language]) {
-          // Found a matching page, redirect to its path in current language
+          // Redirect to the correct slug for current language
           navigate(matchingPage.slugs[language], { replace: true });
-          break;
+          return;
         }
       }
+
+      navigate('/404');
     }
   }, [pathname, language]);
 
-  const page = getData[language].pages[pathname];
+  const page = getData()[language].pages[pathname];
+  if (!page) return null;
 
-  if (!page) {
-    console.log('Page not found:', {
-      pathname,
-      language,
-      availablePages: getData[language].pages,
-    });
-    return null;
-  }
-
-  return <Page {...page} />;
+  return (
+    <Page {...page} />
+  );
 } 
