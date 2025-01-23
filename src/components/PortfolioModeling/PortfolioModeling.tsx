@@ -32,7 +32,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     addWalletLabel = "Add Wallet",
     buyLabel = "Buy",
     sellLabel = "Sell",
-    addAssetLabel = "+ Add asset",
+    addAssetLabel = "+ Add Asset",
     walletErrorMessages = {
       exceedsTotal: "Portfolio total exceeds 100% by {value}%",
       belowTotal: "Portfolio total is below 100% by {value}%",
@@ -44,13 +44,27 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     },
     defaultCapital = 0,
     defaultWallets = [],
-    autoCapitalLabel = "Auto Capital",
-    autoWalletLabel = "Auto Wallet",
-    autoTooltip = "### Tryby automatyczne\n\n**Automatyczny kapitał**\n- Sumuje wartości wszystkich portfeli jako kapitał całkowity\n- Aktualizuje się automatycznie przy zmianie wartości portfeli\n\n**Automatyczny portfel**\n- Sumuje wartości walorów w portfelu jako wartość portfela\n- Aktualizuje się automatycznie przy zmianie wartości walorów",
+    autoCapitalLabel = "Auto-Capital",
+    autoWalletLabel = "Auto-Wallet",
+    autoTooltip = `### Automatic Modes
+
+## Auto Capital
+- Sums up all portfolio values as total capital
+- Updates automatically when portfolio values change
+
+### Not suitable for portfolio rebalancing!
+**Use when you don't know the total capital, but know portfolio values.**
+**After calculating total capital, turn off automatic mode.**
+
+## Auto Portfolio
+- Sums up all asset values as portfolio value
+- Updates automatically when asset values change
+
+**Use when you don't know the portfolio value, but know asset values.**`,
     defaultAutoCapital = false,
     defaultAutoWallet = false,
     defaultWalletName = "Wallet {number}",
-    defaultAssetName = "Walor {number}",
+    defaultAssetName = "Asset {number}",
     newPortfolioName = "Portfolio {number}",
     autoFillButtonTitle = "Set to {value}%",
     defaultTabs = [
@@ -59,8 +73,8 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         wallets: defaultWallets || [],
       },
     ],
-    exportLabel = "Eksportuj",
-    importLabel = "Importuj",
+    exportLabel = "Export",
+    importLabel = "Import",
   } = props;
 
   const [tabs, setTabs] = useState<Array<{ id: string; name: string }>>(() => {
