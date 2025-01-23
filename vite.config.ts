@@ -21,6 +21,7 @@ export default defineConfig({
       },
     },
   },
+  assetsInclude: ['**/*.yaml', '**/*.yml'],
   resolve: {
     alias: {
       '/src': path.resolve(__dirname, 'src')

@@ -18,7 +18,7 @@ async function importFiles() {
 
     // Load meta
     try {
-      const meta = await import(/* @vite-ignore */ `/src/cms/${lang}/meta.yaml`);
+      const meta = await import(/* @vite-ignore */ `./${lang}/meta.yaml`);
       data[lang].meta = meta.default;
     } catch (error) {
       console.warn(`Meta file not found for language: ${lang}`);
