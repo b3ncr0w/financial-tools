@@ -3,8 +3,6 @@ menuTitle: Modelowanie portfela
 order: 1
 slug: /modelowanie-portfela
 content:
-  - type: heading
-    text: Modelowanie Portfela
   - type: component
     name: portfolio-modeling
     props:

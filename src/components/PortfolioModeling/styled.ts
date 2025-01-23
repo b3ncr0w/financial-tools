@@ -1,88 +1,96 @@
 import styled from 'styled-components';
-import { ChangeEvent } from 'react';
 
-export type InputChangeEvent = ChangeEvent<HTMLInputElement>;
+const SPACING = {
+  gap: '16px',
+  padding: '16px',
+  itemPadding: '8px 16px',
+} as const;
+
+const COLUMN_WIDTHS = {
+  name: '150px',
+  percentage: '50px',
+  value: '100px',
+  target: '150px',
+  action: '40px'
+} as const;
 
 export const Container = styled.div`
+  width: fit-content;
+  margin: 0 auto;
+  padding: ${SPACING.padding};
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-  max-width: 800px;
-  margin: 0 auto;
+  align-items: center;
+  gap: ${SPACING.gap};
 `;
 
-export const Header = styled.div`
+export const ItemContainer = styled.div`
   display: flex;
-  padding: 0 var(--spacing-md);
-  margin-bottom: -4px;
-  gap: var(--spacing-md);
-  align-items: flex-end;
-  min-height: 24px;
+  padding: ${SPACING.itemPadding};
+  gap: ${SPACING.gap};
+  align-items: center;
+  height: 48px;
+
+  & > *:nth-child(1) { min-width: ${COLUMN_WIDTHS.name}; max-width: ${COLUMN_WIDTHS.name}; }
+  & > *:nth-child(2) { min-width: ${COLUMN_WIDTHS.percentage}; max-width: ${COLUMN_WIDTHS.percentage}; }
+  & > *:nth-child(3) { min-width: ${COLUMN_WIDTHS.value}; max-width: ${COLUMN_WIDTHS.value}; }
+  & > *:nth-child(4) { min-width: ${COLUMN_WIDTHS.target}; max-width: ${COLUMN_WIDTHS.target}; }
+  & > *:nth-child(5) { min-width: ${COLUMN_WIDTHS.action}; max-width: ${COLUMN_WIDTHS.action}; }
 `;
 
-export const HeaderLabel = styled.div`
-  font-size: 0.75em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  letter-spacing: 0.5px;
-  font-weight: 500;
-  padding: 0 10px;
-  line-height: 1.4;
+export const HeaderRow = styled(ItemContainer)`
+  display: flex;
+  padding: 0 ${SPACING.padding};
+  gap: ${SPACING.gap};
+  align-items: center;
+  margin-left: 12px;
+  transform: translateY(12px);
+  
+  & > * {
+    font-size: 0.75em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    text-align: center;
+    padding: 0 8.5px;
+  }
 
-  &:nth-child(1) { flex: 2; padding-left: 0; }
-  &:nth-child(2) { width: 90px; text-align: right; }
-  &:nth-child(3) { width: 140px; text-align: right; }
-  &:nth-child(4) { width: 140px; text-align: right; }
-  &:nth-child(5) { width: 40px; padding-right: 0; }
+  & > *:nth-child(1) { min-width: ${COLUMN_WIDTHS.name}; max-width: ${COLUMN_WIDTHS.name}; }
+  & > *:nth-child(2) { min-width: ${COLUMN_WIDTHS.percentage}; max-width: ${COLUMN_WIDTHS.percentage}; }
+  & > *:nth-child(3) { min-width: ${COLUMN_WIDTHS.value}; max-width: ${COLUMN_WIDTHS.value}; }
+  & > *:nth-child(4) { min-width: ${COLUMN_WIDTHS.target}; max-width: ${COLUMN_WIDTHS.target}; }
+  & > *:nth-child(5) { min-width: ${COLUMN_WIDTHS.action}; max-width: ${COLUMN_WIDTHS.action}; }
 `;
 
 export const WalletList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+`;
+
+export const WalletPanel = styled.div`
+  width: fit-content;
   display: flex;
   flex-direction: column;
   background: var(--color-surface);
   border-radius: 12px;
   border: 1px solid var(--color-border);
   overflow: hidden;
-`;
-
-export const WalletItemContainer = styled.div`
-  display: flex;
-  padding: var(--spacing-sm) var(--spacing-md);
-  align-items: center;
-  gap: var(--spacing-md);
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  & > *:nth-child(1) { flex: 2; }
-  & > *:nth-child(2) { width: 90px; }
-  & > *:nth-child(3) { width: 120px; }
-  & > *:nth-child(4) { width: 140px; }
-  & > *:nth-child(5) { width: 40px; }
-`;
-
-export const PercentageInputGroup = styled.div`
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  justify-content: flex-end;
-
-  input {
-    width: 60px;
-  }
+  padding: 0;
 `;
 
 export const CompactInput = styled.input`
-  padding: 8px 10px;
+  height: 32px;
+  padding: 0 8px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
   background: var(--color-surface);
   color: var(--color-text);
   font-size: 0.95em;
   width: 100%;
+  text-align: center;
   transition: all 0.15s;
-  
+
   &:hover {
     border-color: var(--color-primary);
   }
@@ -94,26 +102,23 @@ export const CompactInput = styled.input`
   }
 
   &[type="number"] {
-    text-align: right;
-    font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    padding-right: 8px;
-  }
-
-  &::placeholder {
-    color: var(--color-text-secondary);
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
 `;
 
 export const ValueDisplay = styled.div`
-  text-align: right;
-  font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums;
-  padding: 8px 10px;
-  background: var(--color-surface);
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  min-width: 0;
+  height: 32px;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
 `;
 
 export const Value = styled.div`
@@ -128,10 +133,10 @@ export const Balance = styled.div<{ $positive: boolean }>`
 `;
 
 export const ActionButton = styled.button`
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border: none;
-  background: var(--color-surface);
+  background: transparent;
   color: var(--color-text-secondary);
   border-radius: 8px;
   cursor: pointer;
@@ -160,8 +165,8 @@ export const AddButton = styled.button`
   transition: all 0.2s;
   
   &:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    background: var(--color-background);
+    color: var(--color-text);
   }
 `;
 
@@ -178,69 +183,34 @@ export const AutoFillButton = styled(ActionButton)`
   }
 `;
 
-export const Summary = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-surface);
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
-`;
+export const WalletAssets = styled.div`
+  margin: 0;
+  padding: 0;
+  background: var(--color-background);
+  border-top: 1px solid var(--color-border);
 
-export const SummaryItem = styled.div`
-  font-size: 0.95em;
-  font-weight: 500;
-  
-  .valid {
-    color: var(--color-success);
-    font-weight: 600;
-  }
-  
-  .invalid {
-    color: var(--color-error);
-    font-weight: 600;
+  ${ItemContainer} {
+    background: var(--color-background);
+    padding: ${SPACING.itemPadding};
+    
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--color-border);
+    }
   }
 `;
 
-export const ErrorMessage = styled.div`
-  color: var(--color-error);
+export const AddAssetButton = styled(AddButton)`
+  margin: 0;
+  padding: ${SPACING.itemPadding};
   font-size: 0.9em;
-`;
-
-export const TotalCapitalSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-`;
-
-export const TotalCapitalRow = styled.div`
-  display: flex;
-  gap: var(--spacing-xs);
-  align-items: center;
-`;
-
-export const TransferButton = styled.button`
-  padding: 8px 10px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  font-size: 0.9em;
-  cursor: pointer;
-  transition: all 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  width: 100%;
+  height: 48px;
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
   
   &:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    background: var(--color-background);
+    border-color: var(--color-border);
   }
-`;
-
-export const Label = styled.label`
-  font-size: 0.85em;
-  color: var(--color-text-secondary);
-  font-weight: 500;
 `;

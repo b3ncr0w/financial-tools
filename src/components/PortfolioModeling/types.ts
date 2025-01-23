@@ -1,8 +1,16 @@
+export interface Asset {
+  id: string;
+  name: string;
+  percentage: number;
+  currentValue: number;
+}
+
 export interface Wallet {
   id: string;
   name: string;
   percentage: number;
   currentValue: number;
+  assets: Asset[];
 }
 
 export interface PortfolioModelingProps {

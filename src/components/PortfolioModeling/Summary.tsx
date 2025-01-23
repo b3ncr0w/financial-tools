@@ -1,4 +1,4 @@
-import { Summary, SummaryItem, ErrorMessage } from './styled';
+import { Summary, SummaryItem, ErrorMessage } from './styled/common';
 
 interface SummaryProps {
   totalPercentage: number;

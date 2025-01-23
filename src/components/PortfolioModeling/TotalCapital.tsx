@@ -1,4 +1,5 @@
-import { CompactInput, InputChangeEvent } from './styled';
+import { CompactInput } from './styled';
+import { InputChangeEvent } from './styled/common';
 
 interface TotalCapitalProps {
   value: number;
