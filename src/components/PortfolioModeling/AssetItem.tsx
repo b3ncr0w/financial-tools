@@ -72,8 +72,8 @@ export function AssetItem({
             onClick={() => onDistribute(walletId, asset.id)}
           >
             {totalPercentage > 100 
-              ? `-${(totalPercentage - 100).toFixed(1)}` 
-              : `+${(100 - totalPercentage).toFixed(1)}`
+              ? `-${(totalPercentage - 100)}` 
+              : `+${(100 - totalPercentage)}` + '%'
             }
           </AutoFillButton>
         )}

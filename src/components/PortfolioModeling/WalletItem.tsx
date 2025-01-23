@@ -105,8 +105,8 @@ export function WalletItem({
             title={`Ustaw na ${(100 - (totalPercentage - wallet.percentage)).toFixed(1)}%`}
           >
             {totalPercentage > 100 
-              ? `-${(totalPercentage - 100).toFixed(1)}` 
-              : `+${(100 - totalPercentage).toFixed(1)}`
+              ? `-${(totalPercentage - 100)}` 
+              : `+${(100 - totalPercentage)}` + '%'
             }
           </AutoFillButton>
         )}

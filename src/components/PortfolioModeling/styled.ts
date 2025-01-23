@@ -277,27 +277,22 @@ export const WalletAssets = styled.div`
   }
 `;
 
-export const AutoFillButton = styled(ActionButton)`
+export const AutoFillButton = styled(BaseButton)`
   position: absolute;
-  left: calc(${COLUMN_WIDTHS.name} + ${COLUMN_WIDTHS.percentage} - 50px);
-  top: -18px;
-  height: 24px;
-  width: 50px;
+  right: 80px;
+  top: 12px;
   background: var(--color-primary);
-  color: white;
-  font-size: 0.85em;
-  border-radius: 12px;
   z-index: 1;
-  
+  border: none;
+
   &:hover {
-    opacity: 0.9;
+    color: var(--color-text-primary);
     transform: scale(1.05);
-    background: var(--color-primary);
   }
 
   ${WalletAssets} & {
-    left: 14px;
-    top: -28px;
+    top: 2px;
+    right: -198px;
     background: var(--color-secondary);
   }
 `;
