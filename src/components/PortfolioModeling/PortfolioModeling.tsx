@@ -13,16 +13,9 @@ import {
 import { TotalCapital } from "./TotalCapital";
 import { WalletItem } from "./WalletItem";
 import { PortfolioSummary } from "./Summary";
-import { Wallet, PortfolioModelingProps } from "./types";
+import { Wallet, PortfolioModelingProps, TabData } from "./types";
 import { Tabs } from "./Tabs";
 import { InfoTooltip } from './InfoTooltip';
-
-interface TabData {
-  wallets: Wallet[];
-  totalCapital: number;
-  autoCapital: boolean;
-  autoWallet: boolean;
-}
 
 export function PortfolioModeling(props: PortfolioModelingProps) {
   const {
@@ -71,7 +64,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
           currentValue: asset.currentValue || 0,
         })),
       })),
-      totalCapital: defaultCapital,
+      totalCapital: defaultCapital || null,
       autoCapital: defaultAutoCapital,
       autoWallet: defaultAutoWallet,
     }
@@ -94,9 +87,9 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     updateTabData({ wallets: newWallets });
   };
 
-  const setTotalCapital = (value: number) => {
+  const setTotalCapital = (value: number | null) => {
     if (!autoCapital) {
-      updateTabData({ totalCapital: value });
+      updateTabData({ totalCapital: value === 0 ? null : value });
     }
   };
 
@@ -159,7 +152,10 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         setWallets(updatedWallets);
       }
     }
-  }, [autoWallet, totalCapital, wallets.map(w => [w.percentage, w.assets.map(a => a.currentValue).join()]).join()]);
+  }, [autoWallet, JSON.stringify(wallets.map(w => ({
+    percentage: w.percentage,
+    assetValues: w.assets.map(a => a.currentValue)
+  })))]);
 
   const addWallet = () => {
     setWallets([
@@ -282,13 +278,13 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   };
 
   const getPortfolioError = () => {
-    if (wallets.length === 0) return '';
+    if (wallets.length === 0 || !totalCapital) return '';
     if (totalPercentage === 100) return '';
     
     const diff = Math.abs(totalPercentage - 100).toFixed(1);
     return totalPercentage > 100
-      ? `Suma procentów portfeli przekracza 100% o ${diff}%`
-      : `Do 100% sumy portfeli brakuje ${diff}%`;
+      ? walletErrorMessages.exceedsTotal.replace('{value}', diff)
+      : walletErrorMessages.belowTotal.replace('{value}', diff);
   };
 
   const getAssetsError = () => {
@@ -330,7 +326,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         })),
       }))
     );
-    setTotalCapital(defaultCapital);
+    setTotalCapital(defaultCapital || null);
 
     // Potem ustawiamy flagi
     setAutoCapital(defaultAutoCapital);
@@ -347,7 +343,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
       ...tabsData,
       [newTab.id]: {
         wallets: [],
-        totalCapital: defaultCapital,
+        totalCapital: defaultCapital || null,
         autoCapital: defaultAutoCapital,
         autoWallet: defaultAutoWallet,
       }
@@ -400,7 +396,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
           <Label>{totalCapitalLabel}</Label>
           <TotalCapitalRow>
             <TotalCapital
-              value={totalCapital}
+              value={totalCapital || undefined}
               onChange={setTotalCapital}
               disabled={autoCapital}
             />
@@ -438,7 +434,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
               wallet={wallet}
               isValid={isValid}
               totalPercentage={totalPercentage}
-              targetValue={(totalCapital * wallet.percentage) / 100}
+              targetValue={((totalCapital || 0) * wallet.percentage) / 100}
               labels={{
                 buy: buyLabel,
                 sell: sellLabel,

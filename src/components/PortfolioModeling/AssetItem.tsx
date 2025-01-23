@@ -14,6 +14,7 @@ import {
   ActionColumn
 } from './styled';
 import { Asset } from './types';
+import { formatNumber } from './utils';
 
 interface AssetItemProps {
   asset: Asset;
@@ -91,10 +92,10 @@ export function AssetItem({
 
       <TargetColumn>
         <ValueDisplay>
-          <Value>{assetsValid ? targetValue.toFixed(2) : '\u00A0-\u00A0'}</Value>
+          <Value>{assetsValid ? formatNumber(targetValue) : '\u00A0-\u00A0'}</Value>
           {assetsValid && balance !== 0 && asset.currentValue > 0 && (
             <Balance $positive={balance >= 0} $isAsset>
-              {balance === 0 ? '' : `${balance > 0 ? labels.buy : labels.sell}: ${Math.abs(balance).toFixed(2)}`}
+              {balance === 0 ? '' : `${balance > 0 ? labels.buy : labels.sell}: ${formatNumber(Math.abs(balance))}`}
             </Balance>
           )}
         </ValueDisplay>

@@ -54,4 +54,11 @@ export interface PortfolioModelingProps {
 
   // Tooltips
   autoTooltip?: string;
+}
+
+export interface TabData {
+  wallets: Wallet[];
+  totalCapital: number | null;
+  autoCapital: boolean;
+  autoWallet: boolean;
 } 

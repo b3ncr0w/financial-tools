@@ -18,6 +18,7 @@ import {
 } from './styled';
 import { AssetItem } from './AssetItem';
 import { Wallet } from './types';
+import { formatNumber } from './utils';
 
 interface WalletItemProps {
   wallet: Wallet;
@@ -53,11 +54,6 @@ interface WalletItemProps {
   autoWallet: boolean;
   autoFillButtonTitle: string;
 }
-
-const formatNumber = (value: number) => {
-  if (!value && value !== 0) return '\u00A0-\u00A0';
-  return value === 0 ? '' : value.toFixed(2);
-};
 
 export function WalletItem({
   wallet,
@@ -124,7 +120,7 @@ export function WalletItem({
         </ValueColumn>
         <TargetColumn>
           <ValueDisplay>
-            <Value>{isValid ? targetValue.toFixed(2) : '\u00A0-\u00A0'}</Value>
+            <Value>{isValid ? formatNumber(targetValue) : '\u00A0-\u00A0'}</Value>
             {isValid && balance !== 0 && (
               <Balance $positive={balance >= 0}>
                 {balance > 0 ? labels.buy : labels.sell} {formatNumber(Math.abs(balance))}
