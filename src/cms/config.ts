@@ -12,7 +12,7 @@ export const config = {
     }
   } as const,
   defaults: {
-    language: "en" as const,
+    language: "pl" as const,
     theme: "dark" as const
   }
 } as const;

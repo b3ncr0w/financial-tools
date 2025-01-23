@@ -10,10 +10,10 @@ const SPACING = {
 } as const;
 
 const COLUMN_WIDTHS = {
-  name: '120px',
+  name: '110px',
   percentage: '70px',
   value: '90px',
-  target: '150px',
+  target: '100px',
   action: '30px'
 } as const;
 
@@ -68,7 +68,7 @@ export const CompactInput = styled.input`
   border-radius: 6px;
   background: transparent;
   color: var(--color-text);
-  font-size: 0.95em;
+  font-size: 0.9em;
   width: 100%;
   text-align: center;
   transition: all 0.15s;
@@ -196,10 +196,10 @@ export const TopPanel = styled.div`
   box-sizing: border-box;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: ${SPACING.gap};
+  gap: 60px;
   width: 100%;
-  max-width: 1000px;
-  padding: ${SPACING.padding};
+  max-width: 870px;
+  padding: 8px;
   align-items: start;
   animation: ${slideInFromTop} 0.4s ease-out;
 
@@ -214,7 +214,7 @@ export const ActionsPanel = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   width: 100%;
-  max-width: 480px;
+  max-width: 430px;
   justify-self: start;
 
   > button:nth-child(3) {
@@ -258,11 +258,11 @@ export const BottomPanel = styled.div`
   box-sizing: border-box;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 480px);
+  grid-template-columns: repeat(auto-fill, 430px);
   justify-content: center;
   justify-items: start;
   gap: ${SPACING.gap};
-  padding: ${SPACING.padding};
+  padding: 8px;
   position: relative;
   z-index: ${Z_INDEX.base};
   max-width: 1200px;
@@ -271,7 +271,7 @@ export const BottomPanel = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: ${SPACING.gap};
+    padding: 8px;
   }
 `;
 
@@ -282,8 +282,7 @@ export const WalletPanel = styled.div`
   border-radius: 12px;
   border: 1px solid var(--color-border);
   padding: 0;
-  width: 480px;
-  min-width: 480px;
+  max-width: 430px;
   height: fit-content;
   position: relative;
   z-index: ${Z_INDEX.base};
@@ -297,7 +296,7 @@ export const WalletPanel = styled.div`
   @media (max-width: ${BREAKPOINTS.mobile}) {
     width: 100%;
     min-width: 0;
-    max-width: 480px;
+    max-width: 430px;
   }
 `;
 
@@ -391,7 +390,7 @@ export const TotalCapitalSection = styled.div`
   flex-direction: column;
   gap: 8px;
   width: 100%;
-  max-width: 480px;
+  max-width:430px;
   justify-self: end;
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
@@ -477,4 +476,25 @@ export const Toggle = styled.label`
 export const ToggleLabelWrapper = styled.div`
   display: flex;
   align-items: center;
+`;
+
+export const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    
+    input, select {
+      font-size: 14px;
+    }
+
+    label {
+      font-size: 14px;
+    }
+  }
 `;
