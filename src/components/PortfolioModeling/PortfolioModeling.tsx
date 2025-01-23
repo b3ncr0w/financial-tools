@@ -82,11 +82,24 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   useEffect(() => {
     if (autoWallet) {
       const updatedWallets = wallets.map(wallet => {
-        const currentSum = wallet.assets.reduce((sum, asset) => sum + asset.currentValue, 0);
-        if (wallet.currentValue !== currentSum) {
+        // Jeśli nie ma assetów, użyj wartości docelowej
+        if (wallet.assets.length === 0) {
+          const targetValue = (totalCapital * wallet.percentage) / 100;
+          if (wallet.currentValue !== targetValue) {
+            return {
+              ...wallet,
+              currentValue: targetValue
+            };
+          }
+          return wallet;
+        }
+
+        // Jeśli są assety, użyj ich sumy
+        const assetsSum = wallet.assets.reduce((sum, asset) => sum + asset.currentValue, 0);
+        if (wallet.currentValue !== assetsSum) {
           return {
             ...wallet,
-            currentValue: currentSum
+            currentValue: assetsSum
           };
         }
         return wallet;
@@ -101,7 +114,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         setWallets(updatedWallets);
       }
     }
-  }, [autoWallet, wallets.map(w => w.assets.map(a => a.currentValue).join()).join()]);
+  }, [autoWallet, totalCapital, wallets.map(w => [w.percentage, w.assets.map(a => a.currentValue).join()]).join()]);
 
   const addWallet = () => {
     setWallets([
@@ -223,11 +236,26 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     );
   };
 
-  const getErrorMessage = () => {
+  const getPortfolioError = () => {
+    if (totalPercentage === 100) return '';
+    
     const diff = Math.abs(totalPercentage - 100).toFixed(1);
     return totalPercentage > 100
       ? `Suma procentów portfeli przekracza 100% o ${diff}%`
       : `Do 100% sumy portfeli brakuje ${diff}%`;
+  };
+
+  const getAssetsError = () => {
+    for (const wallet of wallets) {
+      const assetsTotal = wallet.assets.reduce((sum, a) => sum + a.percentage, 0);
+      if (assetsTotal !== 100 && wallet.assets.length > 0) {
+        const diff = Math.abs(assetsTotal - 100).toFixed(1);
+        return assetsTotal > 100
+          ? `Suma procentów assetów w portfelu "${wallet.name}" przekracza 100% o ${diff}%`
+          : `Do 100% sumy assetów w portfelu "${wallet.name}" brakuje ${diff}%`;
+      }
+    }
+    return '';
   };
 
   const totalPercentage = wallets.reduce(
@@ -302,7 +330,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
           totalPercentage={totalPercentage}
           isValid={isValid}
           label={totalPercentageLabel}
-          errorMessage={getErrorMessage()}
+          errorMessage={[getPortfolioError(), getAssetsError()].filter(Boolean)}
         />
       </LeftPanel>
 

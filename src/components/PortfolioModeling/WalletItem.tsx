@@ -14,9 +14,7 @@ import {
   PercentageColumn,
   ValueColumn,
   TargetColumn,
-  ActionColumn,
-  Summary,
-  SummaryItem
+  ActionColumn
 } from './styled';
 import { AssetItem } from './AssetItem';
 import { Wallet } from './types';
@@ -65,6 +63,11 @@ interface WalletItemProps {
   autoWallet: boolean;
 }
 
+const formatNumber = (value: number) => {
+  if (!value && value !== 0) return '\u00A0-\u00A0';
+  return value.toFixed(2);
+};
+
 export function WalletItem({
   wallet,
   isValid,
@@ -83,26 +86,6 @@ export function WalletItem({
 }: WalletItemProps) {
   const balance = targetValue - wallet.currentValue;
   const walletTargetValue = targetValue;
-
-  const getAssetErrorMessage = () => {
-    const assetsTotal = wallet.assets.reduce((sum, a) => sum + a.percentage, 0);
-    const diff = Math.abs(assetsTotal - 100).toFixed(1);
-    
-    if (assetsTotal === 100) return null;
-    
-    return (
-      <Summary>
-        <SummaryItem>
-          <span className="invalid">
-            {assetsTotal > 100
-              ? `Suma procentów assetów w portfelu "${wallet.name}" przekracza 100% o ${diff}%`
-              : `Do 100% sumy assetów w portfelu "${wallet.name}" brakuje ${diff}%`
-            }
-          </span>
-        </SummaryItem>
-      </Summary>
-    );
-  };
 
   return (
     <WalletPanel>
@@ -150,12 +133,11 @@ export function WalletItem({
         <TargetColumn>
           <ValueDisplay>
             <Value>{isValid ? targetValue.toFixed(2) : '\u00A0-\u00A0'}</Value>
-            <Balance $positive={balance > 0}>
-              {isValid && balance !== 0 
-                ? `${balance > 0 ? labels.buy : labels.sell}: ${Math.abs(balance).toFixed(2)}` 
-                : '\u00A0-\u00A0'
-              }
-            </Balance>
+            {isValid && balance !== 0 && (
+              <Balance $positive={balance >= 0}>
+                {balance > 0 ? labels.buy : labels.sell} {formatNumber(Math.abs(balance))}
+              </Balance>
+            )}
           </ValueDisplay>
         </TargetColumn>
         <ActionColumn>
@@ -164,25 +146,22 @@ export function WalletItem({
       </ItemContainer>
 
       {wallet.assets.length > 0 && (
-        <>
-          <WalletAssets>
-            {wallet.assets.map(asset => (
-              <AssetItem
-                key={asset.id}
-                asset={asset}
-                walletId={wallet.id}
-                totalPercentage={wallet.assets.reduce((sum, a) => sum + a.percentage, 0)}
-                targetValue={walletTargetValue * asset.percentage / 100}
-                labels={labels}
-                placeholders={placeholders}
-                onUpdate={onUpdateAsset}
-                onRemove={onRemoveAsset}
-                onDistribute={onDistributeAsset}
-              />
-            ))}
-          </WalletAssets>
-          {getAssetErrorMessage()}
-        </>
+        <WalletAssets>
+          {wallet.assets.map(asset => (
+            <AssetItem
+              key={asset.id}
+              asset={asset}
+              walletId={wallet.id}
+              totalPercentage={wallet.assets.reduce((sum, a) => sum + a.percentage, 0)}
+              targetValue={walletTargetValue * asset.percentage / 100}
+              labels={labels}
+              placeholders={placeholders}
+              onUpdate={onUpdateAsset}
+              onRemove={onRemoveAsset}
+              onDistribute={onDistributeAsset}
+            />
+          ))}
+        </WalletAssets>
       )}
 
       <AddAssetButton 

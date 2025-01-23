@@ -159,7 +159,7 @@ export const LeftPanel = styled.div`
   justify-content: center;
   width: 350px;
   flex-shrink: 0;
-  padding: 0 16px;
+  padding: 16px;
 
   @media (max-width: ${BREAKPOINTS.mobile}) {
     position: static;
