@@ -192,7 +192,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
   useEffect(() => {
     if (autoWallet) {
       const updatedWallets = wallets.map((wallet) => {
-        // Aktualizuj tylko portfele z assetami
+        // Update only wallets with assets
         if (wallet.assets.length > 0) {
           const assetsSum = wallet.assets.reduce(
             (sum, asset) => sum + asset.currentValue,
@@ -239,7 +239,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
     ]);
   };
 
-  const addWalor = (walletId: string) => {
+  const addAsset = (walletId: string) => {
     setWallets(
       wallets.map((wallet) =>
         wallet.id === walletId
@@ -481,7 +481,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
         });
         setActiveTab(newTab.id);
       } catch (error) {
-        setToastMessages(messages => [...messages, 'Błąd podczas importowania pliku']);
+        setToastMessages(messages => [...messages, 'Error importing file']);
       }
     };
     reader.readAsText(file);
@@ -617,7 +617,7 @@ export function PortfolioModeling(props: PortfolioModelingProps) {
             onUpdate={updateWallet}
             onRemove={removeWallet}
             onDistribute={distributeRemaining}
-            onAddAsset={addWalor}
+            onAddAsset={addAsset}
             onUpdateAsset={updateAsset}
             onRemoveAsset={removeAsset}
             onDistributeAsset={distributeAsset}
