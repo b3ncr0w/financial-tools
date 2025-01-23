@@ -15,7 +15,8 @@ export default defineConfig({
         main: path.resolve(__dirname, 'index.html'),
       },
     },
+    copyPublicDir: true,
   },
-  publicDir: 'public',
+  publicDir: 'src/cms',
   assetsInclude: ['**/*.yaml', '**/*.yml'],
 })
